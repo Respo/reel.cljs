@@ -21,7 +21,6 @@
 
 (defn render-app! []
   (let [target (.querySelector js/document "#app")]
-    (println "during render app:" (type updater))
     (render! (comp-container @reel-ref updater) target dispatch! states-ref)))
 
 (def ssr-stages

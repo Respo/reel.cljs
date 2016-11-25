@@ -18,8 +18,15 @@
       :reel/recall
         (let [[idx a-store] op-data]
           (-> reel (assoc :pointer idx) (assoc :stopped? true) (assoc :store a-store)))
-      :reel/view reel
-      :reel/run reel
+      :reel/run
+        (-> reel (assoc :store op-data) (assoc :stopped? false) (assoc :pointer nil))
+      :reel/merge
+        (-> reel
+            (assoc :store op-data)
+            (assoc :initial-store op-data)
+            (assoc :stopped? false)
+            (assoc :pointer nil)
+            (assoc :records []))
       (do (println "Unknown reel/ op:" op) reel))
     (let [data-pack [op op-data op-id]]
       (if (:stopped? reel)
