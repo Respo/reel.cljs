@@ -54,6 +54,7 @@ If you are going to use the debugger, add `updater` as a parameter:
 
 ```clojure
 (comp-container @reel-ref updater)
+```
 
 To use the debugger as a component:
 
