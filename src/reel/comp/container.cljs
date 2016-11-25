@@ -8,9 +8,10 @@
             [reel.comp.reel :refer [comp-reel]]
             [reel.comp.todolist :refer [comp-todolist]]))
 
-(defn render [reel]
+(defn render [reel updater]
   (fn [state mutate!]
+    (println "In Container:" (type updater))
     (let [store (:store reel)]
-      (div {:style (merge ui/global)} (comp-todolist store) (comp-reel reel)))))
+      (div {:style (merge ui/global)} (comp-todolist store) (comp-reel reel updater)))))
 
 (def comp-container (create-comp :container render))

@@ -26,7 +26,6 @@
       (button
        {:style ui/button, :event {:click (on-click mutate! state)}}
        (comp-text "Add" nil)))
-     (comp-space nil 8)
      (div {} (->> tasks (map (fn [task] [(:id task) (comp-task task)])))))))
 
 (def comp-todolist (create-comp :todolist init-input update-input render))

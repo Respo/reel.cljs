@@ -9,6 +9,8 @@
 
 (defn on-input [task-id] (fn [e dispatch!] (dispatch! :task/edit [task-id (:value e)])))
 
+(def style-container {:height 32, :margin "8px 0"})
+
 (def style-done
   {:background-color colors/attractive, :width 32, :display :inline-block, :height 32})
 
@@ -19,7 +21,7 @@
 (defn render [task]
   (fn [state mutate!]
     (div
-     {}
+     {:style style-container}
      (div
       {:style (merge style-done (if (:done? task) {:background-color colors/warm})),
        :event {:click (on-toggle (:id task))}})
