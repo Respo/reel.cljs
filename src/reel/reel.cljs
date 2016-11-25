@@ -6,11 +6,17 @@
    :initial-store nil,
    :store nil,
    :records [],
-   :stopped? false})
+   :stopped? false,
+   :display? false})
 
 (defn reel-updater [updater reel op op-data op-id]
-  (if (string/starts-with? (name op) "reel/")
-    (case op :reel/view reel :reel/run reel (do (println "Unknown reel/ op:" op) reel))
+  (println "Name:" (name op))
+  (if (string/starts-with? (str op) ":reel/")
+    (case op
+      :reel/toggle (update reel :display? not)
+      :reel/view reel
+      :reel/run reel
+      (do (println "Unknown reel/ op:" op) reel))
     (-> reel
         (assoc :store (updater (:store reel) op op-data op-id))
         (update :records (fn [records] (conj records [op op-data op-id]))))))

@@ -10,10 +10,12 @@
 (defn on-click [mutate! text]
   (fn [state dispatch!] (dispatch! :task/add text) (mutate! "")))
 
+(def style-container {:padding 8})
+
 (defn render [tasks]
   (fn [state mutate!]
     (div
-     {}
+     {:style style-container}
      (div
       {}
       (input

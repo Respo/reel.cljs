@@ -13,6 +13,7 @@
 
 (defn dispatch! [op op-data]
   (let [op-id (id!), new-reel (reel-updater updater @reel-ref op op-data op-id)]
+    (comment println "Reel:" new-reel)
     (reset! reel-ref new-reel)))
 
 (defonce states-ref (atom {}))
