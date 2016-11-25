@@ -3,13 +3,15 @@
   (:require
     [respo.alias :refer [html head title script style meta' div link body]]
     [respo.render.html :refer [make-html make-string]]
-    [stack-workflow.comp.container :refer [comp-container]]))
+    [reel.updater :refer [updater]]
+    [reel.reel :refer [reel-schema]]
+    [reel.comp.container :refer [comp-container]]))
 
 (defn html-dsl [data html-content ssr-stages]
   (make-html
     (html {}
       (head {}
-        (title {:attrs {:innerHTML "Stack Workflow"}})
+        (title {:attrs {:innerHTML "Reel"}})
         (link {:attrs {:rel "icon" :type "image/png" :href "http://logo.mvc-works.org/mvc.png"}})
         (link {:attrs {:rel "stylesheet" :type "text/css" :href "style.css"}})
         (link (:attrs {:rel "manifest" :href "manifest.json"}))
@@ -24,7 +26,10 @@
         (script {:attrs {:src "main.js"}})))))
 
 (defn generate-html [ssr-stages]
-  (let [ tree (comp-container {} ssr-stages)
+  (let [ reel (-> reel
+                  (assoc :store (list))
+                  (assoc :initial-store (list)))
+         tree (comp-container reel ssr-stages)
          html-content (make-string tree)]
     (html-dsl {:build? true} html-content ssr-stages)))
 

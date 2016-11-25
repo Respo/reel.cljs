@@ -7,10 +7,10 @@
                   [adzerk/boot-reload        "0.4.13"      :scope "test"]
                   [cirru/boot-stack-server   "0.1.24"      :scope "test"]
                   [adzerk/boot-test          "1.1.2"       :scope "test"]
+                  [respo                     "0.3.32"      :scope "test"]
                   [mvc-works/hsl             "0.1.2"]
                   [respo/ui                  "0.1.6"]
-                  [cumulo/recollect          "0.1.2"]
-                  [respo                     "0.3.32"]])
+                  [cumulo/recollect          "0.1.2"]])
 
 (require '[adzerk.boot-cljs   :refer [cljs]]
          '[adzerk.boot-reload :refer [reload]]
@@ -25,7 +25,7 @@
 (task-options!
   pom {:project     'respo/reel
        :version     +version+
-       :description "Workflow"
+       :description "Time travel demo for Respo"
        :url         "https://github.com/Respo/reel"
        :scm         {:url "https://github.com/Respo/reel"}
        :license     {"MIT" "http://opensource.org/licenses/mit-license.php"}})
