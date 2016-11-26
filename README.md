@@ -59,7 +59,7 @@ If you are going to use the debugger, add `updater` as a parameter:
 To use the debugger as a component:
 
 ```clojure
-(comp-reel reel updater)
+(comp-reel reel updater false) ; false for server?
 ```
 
 ### Develop

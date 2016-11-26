@@ -21,7 +21,7 @@
 
 (defn render-app! []
   (let [target (.querySelector js/document "#app")]
-    (render! (comp-container @reel-ref updater) target dispatch! states-ref)))
+    (render! (comp-container @reel-ref updater false) target dispatch! states-ref)))
 
 (def ssr-stages
   (let [ssr-element (.querySelector js/document "#ssr-stages")
@@ -34,7 +34,7 @@
     (let [target (.querySelector js/document "#app")]
       (falsify-stage!
        target
-       (render-element (comp-container @reel-ref updater) states-ref)
+       (render-element (comp-container @reel-ref updater true) states-ref)
        dispatch!)))
   (render-app!)
   (add-watch reel-ref :gc (fn [] (gc-states! states-ref)))

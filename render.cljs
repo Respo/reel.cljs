@@ -26,10 +26,10 @@
         (script {:attrs {:src "main.js"}})))))
 
 (defn generate-html [ssr-stages]
-  (let [ reel (-> reel
+  (let [ reel (-> reel-schema
                   (assoc :store (list))
                   (assoc :initial-store (list)))
-         tree (comp-container reel ssr-stages)
+         tree (comp-container reel ssr-stages true)
          html-content (make-string tree)]
     (html-dsl {:build? true} html-content ssr-stages)))
 

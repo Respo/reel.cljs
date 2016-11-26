@@ -16,12 +16,10 @@
 (def style-panel
   {:bottom 0,
    :background-color colors/paper,
-   :width (* 0.6 (.-innerWidth js/window)),
-   :opacity 0.9,
+   :opacity 0.8,
    :right 0,
    :position :fixed,
-   :transition-duration "400ms",
-   :height (.-innerHeight js/window)})
+   :transition-duration "400ms"})
 
 (defn play-records [store records updater]
   (if (empty? records)
@@ -29,25 +27,29 @@
     (let [[op op-data op-id] (first records), next-store (updater store op op-data op-id)]
       (recur next-store (rest records) updater))))
 
+(defn style-size [server?]
+  {:width (if server? 600 (.-innerWidth js/window)),
+   :height (if server? 600 (.-innerHeight js/window))})
+
 (defn on-toggle [e dispatch!] (dispatch! :reel/toggle nil))
 
 (def style-link
   (merge style-panel {:transform "scale(0.2)", :transform-origin "100% 100%"}))
 
 (defn replay-store [reel updater idx]
-  (if (:stopped? reel)
-    (let [records-slice (if (:stopped? reel) (subvec (:records reel) 0 idx) (:records reel))]
-      (play-records (:initial-store reel) records-slice updater))
-    (:store reel)))
+  (let [records-slice (subvec (:records reel) 0 idx)]
+    (play-records (:initial-store reel) records-slice updater)))
 
 (defn on-recall [reel updater]
   (fn [idx] (fn [e dispatch!] (dispatch! :reel/recall [idx (replay-store reel updater idx)]))))
 
-(defn render [reel updater]
+(defn on-reset [e dispatch!] (dispatch! :reel/reset nil))
+
+(defn render [reel updater server?]
   (fn [state mutate!]
     (if (:display? reel)
       (div
-       {:style (merge ui/row style-panel)}
+       {:style (merge ui/row style-panel (style-size server?))}
        (comp-records (:records reel) (:pointer reel) (on-recall reel updater))
        (comp-space 8 nil)
        (div
@@ -70,8 +72,10 @@
                                            updater)]
                      (on-merge new-store))}}
           (comp-text "Merge" nil))
-         (div {:style ui/clickable-text, :event {:click on-toggle}} (comp-text "Close" nil)))
+         (div {:style ui/clickable-text, :event {:click on-reset}} (comp-text "Reset" nil))
+         (if (not (:stopped? reel))
+           (div {:style ui/clickable-text, :event {:click on-toggle}} (comp-text "Close" nil))))
         (div {:style ui/row} (comp-text (:store reel) nil))))
-      (div {:style style-link, :event {:click on-toggle}}))))
+      (div {:style (merge style-link (style-size server?)), :event {:click on-toggle}}))))
 
 (def comp-reel (create-comp :reel render))

@@ -27,6 +27,12 @@
             (assoc :stopped? false)
             (assoc :pointer nil)
             (assoc :records []))
+      :reel/reset
+        (-> reel
+            (assoc :store (:initial-store reel))
+            (assoc :pointer nil)
+            (assoc :records [])
+            (assoc :stopped? false))
       (do (println "Unknown reel/ op:" op) reel))
     (let [data-pack [op op-data op-id]]
       (if (:stopped? reel)

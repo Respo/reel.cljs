@@ -95,7 +95,7 @@
                              :optimize-constants true
                              :source-map true})
     (html-file :data {:build? true})
-    (target)))
+    (target :no-clean true)))
 
 (deftask rsync []
   (with-pre-wrap fileset
