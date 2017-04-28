@@ -37,8 +37,8 @@ In a todolist, the initial store is `(list)`:
 ```clojure
 (defonce reel-ref
   (atom (-> reel-schema
-            (assoc :initial-store (list))
-            (assoc :store (list)))))
+            (assoc :initial-store ({:states {} :tasks (list)}))
+            (assoc :store ({:states {} :tasks (list)})))))
 ```
 
 And we need a `reel-updater` besides the familiar `updater` we used in Respo:
