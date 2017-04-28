@@ -422,7 +422,7 @@
                                                     ["fn"
                                                      ["cursor"]
                                                      ["let"
-                                                      [["state" [":data" "states"]]]
+                                                      [["state" ["or" [":data" "states"] "|"]]]
                                                       ["div"
                                                        ["{}" [":style" "style-container"]]
                                                        ["div"

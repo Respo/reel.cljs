@@ -18,7 +18,7 @@
    :todolist
    (fn [states tasks]
      (fn [cursor]
-       (let [state (:data states)]
+       (let [state (or (:data states) "")]
          (div
           {:style style-container}
           (div
