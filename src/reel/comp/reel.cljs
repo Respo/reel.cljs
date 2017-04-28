@@ -14,12 +14,12 @@
 (defn on-merge [new-store] (fn [e dispatch!] (dispatch! :reel/merge new-store)))
 
 (def style-panel
-  {:bottom 0,
-   :background-color colors/paper,
-   :opacity 0.8,
+  {:position :fixed,
    :right 0,
-   :position :fixed,
-   :transition-duration "400ms"})
+   :bottom 0,
+   :transition-duration "400ms",
+   :background-color colors/paper,
+   :opacity 0.8})
 
 (defn play-records [store records updater]
   (if (empty? records)

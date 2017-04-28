@@ -1,15 +1,6 @@
 
 (ns reel.reel (:require [clojure.string :as string]))
 
-(def reel-schema
-  {:initial-store nil,
-   :store nil,
-   :records [],
-   :pointer 0,
-   :tab :records,
-   :stopped? false,
-   :display? false})
-
 (defn reel-updater [updater reel op op-data op-id]
   (comment println "Name:" (name op))
   (if (string/starts-with? (str op) ":reel/")
@@ -40,3 +31,12 @@
         (-> reel
             (assoc :store (updater (:store reel) op op-data op-id))
             (update :records (fn [records] (conj records data-pack))))))))
+
+(def reel-schema
+  {:records [],
+   :initial-store nil,
+   :store nil,
+   :pointer 0,
+   :tab :records,
+   :stopped? false,
+   :display? false})

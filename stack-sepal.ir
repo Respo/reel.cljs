@@ -1,1 +1,481 @@
-{:definitions {"main/dispatch!" ["defn" "dispatch!" ["op" "op-data"] ["let" [["op-id" ["id!"]] ["new-reel" ["reel-updater" "updater" "@reel-ref" "op" "op-data" "op-id"]]] ["--" "println" "|Reel:" "new-reel"] ["reset!" "reel-ref" "new-reel"]]], "main/reel-ref" ["defonce" "reel-ref" ["atom" ["->" "reel-schema" ["assoc" ":initial-store" ["list"]] ["assoc" ":store" ["list"]]]]], "comp.task/on-input" ["defn" "on-input" ["task-id"] ["fn" ["e" "dispatch!"] ["dispatch!" ":task/edit" ["[]" "task-id" [":value" "e"]]]]], "comp.records/style-record" ["def" "style-record" ["{}" [":cursor" ":pointer"] [":padding" "|0 8px"]]], "comp.records/render" ["defn" "render" ["records" "pointer" "on-recall"] ["fn" ["state" "mutate!"] ["div" ["{}" [":style" "style-container"]] ["->>" "records" ["cons" ["[]" ":initial" "nil" ":initial"]] ["map-indexed" ["fn" ["idx" "record"] ["[]" ["last" "record"] ["div" ["{}" [":style" ["merge" "style-record" ["if" ["=" "pointer" "idx"] ["{}" [":background-color" "colors/attractive"] [":color" ":white"]]]]] [":event" ["{}" [":click" ["on-recall" "idx"]]]]] ["comp-text" ["first" "record"] "nil"] ["comp-space" "8" "nil"] ["comp-text" ["get" "record" "1"] "style-data"]]]]]]]]], "main/-main!" ["defn" "-main!" [] ["enable-console-print!"] ["if" ["not" ["empty?" "ssr-stages"]] ["let" [["target" [".querySelector" "js/document" "|#app"]]] ["falsify-stage!" "target" ["render-element" ["comp-container" "@reel-ref" "updater" "true"] "states-ref"] "dispatch!"]]] ["render-app!"] ["add-watch" "reel-ref" ":gc" ["fn" [] ["gc-states!" "states-ref"]]] ["add-watch" "reel-ref" ":changes" "render-app!"] ["add-watch" "states-ref" ":changes" "render-app!"] ["println" "|app started!"]], "comp.reel/style-size" ["defn" "style-size" ["server?"] ["{}" [":width" ["if" "server?" "600" [".-innerWidth" "js/window"]]] [":height" ["if" "server?" "600" [".-innerHeight" "js/window"]]]]], "updater/updater" ["defn" "updater" ["store" "op" "op-data" "op-id"] ["case" "op" [":task/add" ["cons" ["{}" [":id" "op-id"] [":done?" "false"] [":text" "op-data"]] "store"]] [":task/remove" ["filter" ["fn" ["task"] ["not=" [":id" "task"] "op-data"]] "store"]] [":task/toggle" ["map" ["fn" ["task"] ["if" ["=" [":id" "task"] "op-data"] ["update" "task" ":done?" "not"] "task"]] "store"]] [":task/edit" ["map" ["fn" ["task"] ["let" [[["[]" "task-id" "text"] "op-data"]] ["if" ["=" [":id" "task"] "task-id"] ["assoc" "task" ":text" "text"] "task"]]] "store"]] "store"]], "main/on-jsload!" ["defn" "on-jsload!" [] ["clear-cache!"] ["render-app!"] ["println" "|code update."]], "comp.task/style-done" ["def" "style-done" ["{}" [":width" "32"] [":height" "32"] [":display" ":inline-block"] [":background-color" "colors/attractive"]]], "comp.task/on-toggle" ["defn" "on-toggle" ["task-id"] ["fn" ["e" "dispatch!"] ["dispatch!" ":task/toggle" "task-id"]]], "comp.reel/on-run" ["defn" "on-run" ["new-store"] ["fn" ["e" "dispatch!"] ["dispatch!" ":reel/run" "new-store"]]], "comp.reel/replay-store" ["defn" "replay-store" ["reel" "updater" "idx"] ["let" [["records-slice" ["subvec" [":records" "reel"] "0" "idx"]]] ["play-records" [":initial-store" "reel"] "records-slice" "updater"]]], "main/render-app!" ["defn" "render-app!" [] ["let" [["target" [".querySelector" "js/document" "|#app"]]] ["render!" ["comp-container" "@reel-ref" "updater" "false"] "target" "dispatch!" "states-ref"]]], "comp.task/comp-task" ["def" "comp-task" ["create-comp" ":task" "render"]], "comp.task/on-remove" ["defn" "on-remove" ["task-id"] ["fn" ["e" "dispatch!"] ["dispatch!" ":task/remove" "task-id"]]], "comp.todolist/style-container" ["def" "style-container" ["{}" [":padding" "8"]]], "util/id!" ["defn" "id!" [] ["swap!" "id-ref" "inc"] "@id-ref"], "comp.container/render" ["defn" "render" ["reel" "updater" "server?"] ["fn" ["state" "mutate!"] ["let" [["store" [":store" "reel"]]] ["div" ["{}" [":style" ["merge" "ui/global"]]] ["comp-todolist" "store"] ["comp-reel" "reel" "updater" "server?"]]]]], "comp.todolist/on-click" ["defn" "on-click" ["mutate!" "text"] ["fn" ["state" "dispatch!"] ["dispatch!" ":task/add" "text"] ["mutate!" "|"]]], "comp.reel/on-recall" ["defn" "on-recall" ["reel" "updater"] ["fn" ["idx"] ["fn" ["e" "dispatch!"] ["dispatch!" ":reel/recall" ["[]" "idx" ["replay-store" "reel" "updater" "idx"]]]]]], "comp.todolist/render" ["defn" "render" ["tasks"] ["fn" ["state" "mutate!"] ["div" ["{}" [":style" "style-container"]] ["div" ["{}"] ["input" ["{}" [":style" "ui/input"] [":event" ["{}" [":input" ["on-input" "mutate!"]]]] [":attrs" ["{}" [":placeholder" "|Task to add..."] [":value" "state"]]]]] ["comp-space" "8" "nil"] ["button" ["{}" [":style" "ui/button"] [":event" ["{}" [":click" ["on-click" "mutate!" "state"]]]]] ["comp-text" "|Add" "nil"]]] ["div" ["{}"] ["->>" "tasks" ["map" ["fn" ["task"] ["[]" [":id" "task"] ["comp-task" "task"]]]]]]]]], "reel/reel-updater" ["defn" "reel-updater" ["updater" "reel" "op" "op-data" "op-id"] ["--" "println" "|Name:" ["name" "op"]] ["if" ["string/starts-with?" ["str" "op"] "|:reel/"] ["case" "op" [":reel/toggle" ["update" "reel" ":display?" "not"]] [":reel/recall" ["let" [[["[]" "idx" "a-store"] "op-data"]] ["->" "reel" ["assoc" ":pointer" "idx"] ["assoc" ":stopped?" "true"] ["assoc" ":store" "a-store"]]]] [":reel/run" ["->" "reel" ["assoc" ":store" "op-data"] ["assoc" ":stopped?" "false"] ["assoc" ":pointer" "nil"]]] [":reel/merge" ["->" "reel" ["assoc" ":store" "op-data"] ["assoc" ":initial-store" "op-data"] ["assoc" ":stopped?" "false"] ["assoc" ":pointer" "nil"] ["assoc" ":records" ["[]"]]]] [":reel/reset" ["->" "reel" ["assoc" ":store" [":initial-store" "reel"]] ["assoc" ":pointer" "nil"] ["assoc" ":records" ["[]"]] ["assoc" ":stopped?" "false"]]] ["do" ["println" "|Unknown reel/ op:" "op"] "reel"]] ["let" [["data-pack" ["[]" "op" "op-data" "op-id"]]] ["if" [":stopped?" "reel"] ["->" "reel" ["update" ":records" ["fn" ["records"] ["conj" "records" "data-pack"]]]] ["->" "reel" ["assoc" ":store" ["updater" [":store" "reel"] "op" "op-data" "op-id"]] ["update" ":records" ["fn" ["records"] ["conj" "records" "data-pack"]]]]]]]], "comp.task/render" ["defn" "render" ["task"] ["fn" ["state" "mutate!"] ["div" ["{}" [":style" "style-container"]] ["div" ["{}" [":style" ["merge" "style-done" ["if" [":done?" "task"] ["{}" [":background-color" "colors/warm"]]]]] [":event" ["{}" [":click" ["on-toggle" [":id" "task"]]]]]]] ["comp-space" "8" "nil"] ["input" ["{}" [":attrs" ["{}" [":value" [":text" "task"]] [":placeholder" "|Content of task"]]] [":event" ["{}" [":input" ["on-input" [":id" "task"]]]]] [":style" "ui/input"]]] ["comp-space" "8" "nil"] ["button" ["{}" [":style" ["merge" "ui/button" ["{}" [":background-color" "colors/irreversible"]]]] [":event" ["{}" [":click" ["on-remove" [":id" "task"]]]]]] ["comp-text" "|Remove" "nil"]]]]], "comp.reel/render" ["defn" "render" ["reel" "updater" "server?"] ["fn" ["state" "mutate!"] ["if" [":display?" "reel"] ["div" ["{}" [":style" ["merge" "ui/row" "style-panel" ["style-size" "server?"]]]] ["comp-records" [":records" "reel"] [":pointer" "reel"] ["on-recall" "reel" "updater"]] ["comp-space" "8" "nil"] ["div" ["{}"] ["div" ["{}"] ["div" ["{}" [":style" "ui/clickable-text"] [":event" ["{}" [":click" ["let" [["new-store" ["play-records" [":initial-store" "reel"] [":records" "reel"] "updater"]]] ["on-run" "new-store"]]]]]] ["comp-text" "|Run" "nil"]] ["div" ["{}" [":style" "ui/clickable-text"] [":event" ["{}" [":click" ["let" [["new-store" ["play-records" [":initial-store" "reel"] [":records" "reel"] "updater"]]] ["on-merge" "new-store"]]]]]] ["comp-text" "|Merge" "nil"]] ["div" ["{}" [":style" "ui/clickable-text"] [":event" ["{}" [":click" "on-reset"]]]] ["comp-text" "|Reset" "nil"]] ["if" ["not" [":stopped?" "reel"]] ["div" ["{}" [":style" "ui/clickable-text"] [":event" ["{}" [":click" "on-toggle"]]]] ["comp-text" "|Close" "nil"]]]] ["div" ["{}" [":style" "ui/row"]] ["comp-text" [":store" "reel"] "nil"]]]] ["div" ["{}" [":style" ["merge" "style-link" ["style-size" "server?"]]] [":event" ["{}" [":click" "on-toggle"]]]]]]]], "comp.reel/on-merge" ["defn" "on-merge" ["new-store"] ["fn" ["e" "dispatch!"] ["dispatch!" ":reel/merge" "new-store"]]], "comp.todolist/comp-todolist" ["def" "comp-todolist" ["create-comp" ":todolist" "init-input" "update-input" "render"]], "comp.reel/on-reset" ["defn" "on-reset" ["e" "dispatch!"] ["dispatch!" ":reel/reset" "nil"]], "reel/reel-schema" ["def" "reel-schema" ["{}" [":records" ["[]"]] [":initial-store" "nil"] [":store" "nil"] [":pointer" "0"] [":tab" ":records"] [":stopped?" "false"] [":display?" "false"]]], "util/id-ref" ["def" "id-ref" ["atom" "0"]], "main/ssr-stages" ["def" "ssr-stages" ["let" [["ssr-element" [".querySelector" "js/document" "|#ssr-stages"]] ["ssr-markup" [".getAttribute" "ssr-element" "|content"]]] ["read-string" "ssr-markup"]]], "comp.records/style-container" ["def" "style-container" ["{}" [":overflow" ":auto"] [":flex-shrink" "0"] [":padding-bottom" "200"] [":padding-top" "40"]]], "comp.reel/play-records" ["defn" "play-records" ["store" "records" "updater"] ["if" ["empty?" "records"] "store" ["let" [[["[]" "op" "op-data" "op-id"] ["first" "records"]] ["next-store" ["updater" "store" "op" "op-data" "op-id"]]] ["recur" "next-store" ["rest" "records"] "updater"]]]], "comp.container/comp-container" ["def" "comp-container" ["create-comp" ":container" "render"]], "comp.reel/on-toggle" ["defn" "on-toggle" ["e" "dispatch!"] ["dispatch!" ":reel/toggle" "nil"]], "comp.reel/comp-reel" ["def" "comp-reel" ["create-comp" ":reel" "render"]], "comp.records/style-data" ["def" "style-data" ["{}" [":max-width" "100"] [":overflow" ":hidden"] [":text-overflow" ":ellipsis"] [":white-space" ":nowrap"] [":display" ":inline-block"] [":vertical-align" ":middle"]]], "comp.reel/style-panel" ["def" "style-panel" ["{}" [":position" ":fixed"] [":right" "0"] [":bottom" "0"] [":transition-duration" "|400ms"] [":background-color" "colors/paper"] [":opacity" "0.8"]]], "comp.records/comp-records" ["def" "comp-records" ["create-comp" ":records" "render"]], "main/states-ref" ["defonce" "states-ref" ["atom" ["{}"]]], "comp.reel/style-link" ["def" "style-link" ["merge" "style-panel" ["{}" [":transform" "|scale(0.2)"] [":transform-origin" "|100% 100%"]]]], "comp.task/style-container" ["def" "style-container" ["{}" [":margin" "|8px 0"] [":height" "32"]]]}, :namespaces {"comp.records" ["ns" "reel.comp.records" [":require" ["[]" "respo.alias" ":refer" ["[]" "create-comp" "div"]] ["[]" "respo-ui.style" ":as" "ui"] ["[]" "respo-ui.style.colors" ":as" "colors"] ["[]" "respo.comp.text" ":refer" ["[]" "comp-text"]] ["[]" "respo.comp.space" ":refer" ["[]" "comp-space"]]]], "updater" ["ns" "reel.updater"], "reel" ["ns" "reel.reel" [":require" ["[]" "clojure.string" ":as" "string"]]], "comp.task" ["ns" "reel.comp.task" [":require" ["[]" "respo.alias" ":refer" ["[]" "create-comp" "div" "input" "button"]] ["[]" "hsl.core" ":refer" ["[]" "hsl"]] ["[]" "respo.comp.text" ":refer" ["[]" "comp-text"]] ["[]" "respo.comp.space" ":refer" ["[]" "comp-space"]] ["[]" "respo-ui.style" ":as" "ui"] ["[]" "respo-ui.style.colors" ":as" "colors"]]], "util" ["ns" "reel.util"], "comp.reel" ["ns" "reel.comp.reel" [":require" ["[]" "respo.alias" ":refer" ["[]" "create-comp" "div" "button"]] ["[]" "hsl.core" ":refer" ["[]" "hsl"]] ["[]" "respo.comp.debug" ":refer" ["[]" "comp-debug"]] ["[]" "respo-ui.style" ":as" "ui"] ["[]" "respo-ui.style.colors" ":as" "colors"] ["[]" "respo.comp.text" ":refer" ["[]" "comp-text"]] ["[]" "respo.comp.space" ":refer" ["[]" "comp-space"]] ["[]" "reel.comp.records" ":refer" ["[]" "comp-records"]]]], "comp.container" ["ns" "reel.comp.container" [":require" ["[]" "hsl.core" ":refer" ["[]" "hsl"]] ["[]" "respo-ui.style" ":as" "ui"] ["[]" "respo.alias" ":refer" ["[]" "create-comp" "div" "span"]] ["[]" "respo.comp.space" ":refer" ["[]" "comp-space"]] ["[]" "respo.comp.text" ":refer" ["[]" "comp-text"]] ["[]" "reel.comp.reel" ":refer" ["[]" "comp-reel"]] ["[]" "reel.comp.todolist" ":refer" ["[]" "comp-todolist"]]]], "comp.todolist" ["ns" "reel.comp.todolist" [":require" ["[]" "respo.alias" ":refer" ["[]" "create-comp" "div" "button" "input"]] ["[]" "respo.comp.text" ":refer" ["[]" "comp-text"]] ["[]" "respo.comp.space" ":refer" ["[]" "comp-space"]] ["[]" "respo-ui.common" ":refer" ["[]" "init-input" "update-input" "on-input"]] ["[]" "respo-ui.style" ":as" "ui"] ["[]" "reel.comp.task" ":refer" ["[]" "comp-task"]]]], "main" ["ns" "reel.main" [":require" ["[]" "respo.core" ":refer" ["[]" "render!" "clear-cache!" "falsify-stage!" "render-element" "gc-states!"]] ["[]" "reel.comp.container" ":refer" ["[]" "comp-container"]] ["[]" "cljs.reader" ":refer" ["[]" "read-string"]] ["[]" "reel.util" ":refer" ["[]" "id!"]] ["[]" "reel.reel" ":refer" ["[]" "reel-schema" "reel-updater"]] ["[]" "reel.updater" ":refer" ["[]" "updater"]]]]}, :procedures {"comp.records" [], "updater" [], "reel" [], "comp.task" [], "util" [], "comp.reel" [], "comp.todolist" [], "main" [["set!" [".-onload" "js/window"] "-main!"]], "updater.core" []}, :package "reel"}
+{:package "reel",
+ :files {"comp.records" {:ns ["ns"
+                              "reel.comp.records"
+                              [":require"
+                               ["[]" "respo.alias" ":refer" ["[]" "create-comp" "div"]]
+                               ["[]" "respo-ui.style" ":as" "ui"]
+                               ["[]" "respo-ui.style.colors" ":as" "colors"]
+                               ["[]" "respo.comp.text" ":refer" ["[]" "comp-text"]]
+                               ["[]" "respo.comp.space" ":refer" ["[]" "comp-space"]]]],
+                         :defs {"style-record" ["def"
+                                                "style-record"
+                                                ["{}" [":cursor" ":pointer"] [":padding" "|0 8px"]]],
+                                "render" ["defn"
+                                          "render"
+                                          ["records" "pointer" "on-recall"]
+                                          ["fn"
+                                           ["state" "mutate!"]
+                                           ["div"
+                                            ["{}" [":style" "style-container"]]
+                                            ["->>"
+                                             "records"
+                                             ["cons" ["[]" ":initial" "nil" ":initial"]]
+                                             ["map-indexed"
+                                              ["fn"
+                                               ["idx" "record"]
+                                               ["[]"
+                                                ["last" "record"]
+                                                ["div"
+                                                 ["{}"
+                                                  [":style"
+                                                   ["merge"
+                                                    "style-record"
+                                                    ["if"
+                                                     ["=" "pointer" "idx"]
+                                                     ["{}"
+                                                      [":background-color" "colors/attractive"]
+                                                      [":color" ":white"]]]]]
+                                                  [":event" ["{}" [":click" ["on-recall" "idx"]]]]]
+                                                 ["comp-text" ["first" "record"] "nil"]
+                                                 ["comp-space" "8" "nil"]
+                                                 ["comp-text" ["get" "record" "1"] "style-data"]]]]]]]]],
+                                "style-container" ["def"
+                                                   "style-container"
+                                                   ["{}"
+                                                    [":overflow" ":auto"]
+                                                    [":flex-shrink" "0"]
+                                                    [":padding-bottom" "200"]
+                                                    [":padding-top" "40"]]],
+                                "style-data" ["def"
+                                              "style-data"
+                                              ["{}"
+                                               [":max-width" "100"]
+                                               [":overflow" ":hidden"]
+                                               [":text-overflow" ":ellipsis"]
+                                               [":white-space" ":nowrap"]
+                                               [":display" ":inline-block"]
+                                               [":vertical-align" ":middle"]]],
+                                "comp-records" ["def" "comp-records" ["create-comp" ":records" "render"]]},
+                         :procs []},
+         "updater" {:ns ["ns" "reel.updater"],
+                    :defs {"updater" ["defn"
+                                      "updater"
+                                      ["store" "op" "op-data" "op-id"]
+                                      ["case"
+                                       "op"
+                                       [":task/add"
+                                        ["cons" ["{}" [":id" "op-id"] [":done?" "false"] [":text" "op-data"]] "store"]]
+                                       [":task/remove"
+                                        ["filter" ["fn" ["task"] ["not=" [":id" "task"] "op-data"]] "store"]]
+                                       [":task/toggle"
+                                        ["map"
+                                         ["fn"
+                                          ["task"]
+                                          ["if" ["=" [":id" "task"] "op-data"] ["update" "task" ":done?" "not"] "task"]]
+                                         "store"]]
+                                       [":task/edit"
+                                        ["map"
+                                         ["fn"
+                                          ["task"]
+                                          ["let"
+                                           [[["[]" "task-id" "text"] "op-data"]]
+                                           ["if" ["=" [":id" "task"] "task-id"] ["assoc" "task" ":text" "text"] "task"]]]
+                                         "store"]]
+                                       "store"]]},
+                    :procs []},
+         "reel" {:ns ["ns" "reel.reel" [":require" ["[]" "clojure.string" ":as" "string"]]],
+                 :defs {"reel-updater" ["defn"
+                                        "reel-updater"
+                                        ["updater" "reel" "op" "op-data" "op-id"]
+                                        ["--" "println" "|Name:" ["name" "op"]]
+                                        ["if"
+                                         ["string/starts-with?" ["str" "op"] "|:reel/"]
+                                         ["case"
+                                          "op"
+                                          [":reel/toggle" ["update" "reel" ":display?" "not"]]
+                                          [":reel/recall"
+                                           ["let"
+                                            [[["[]" "idx" "a-store"] "op-data"]]
+                                            ["->"
+                                             "reel"
+                                             ["assoc" ":pointer" "idx"]
+                                             ["assoc" ":stopped?" "true"]
+                                             ["assoc" ":store" "a-store"]]]]
+                                          [":reel/run"
+                                           ["->"
+                                            "reel"
+                                            ["assoc" ":store" "op-data"]
+                                            ["assoc" ":stopped?" "false"]
+                                            ["assoc" ":pointer" "nil"]]]
+                                          [":reel/merge"
+                                           ["->"
+                                            "reel"
+                                            ["assoc" ":store" "op-data"]
+                                            ["assoc" ":initial-store" "op-data"]
+                                            ["assoc" ":stopped?" "false"]
+                                            ["assoc" ":pointer" "nil"]
+                                            ["assoc" ":records" ["[]"]]]]
+                                          [":reel/reset"
+                                           ["->"
+                                            "reel"
+                                            ["assoc" ":store" [":initial-store" "reel"]]
+                                            ["assoc" ":pointer" "nil"]
+                                            ["assoc" ":records" ["[]"]]
+                                            ["assoc" ":stopped?" "false"]]]
+                                          ["do" ["println" "|Unknown reel/ op:" "op"] "reel"]]
+                                         ["let"
+                                          [["data-pack" ["[]" "op" "op-data" "op-id"]]]
+                                          ["if"
+                                           [":stopped?" "reel"]
+                                           ["->"
+                                            "reel"
+                                            ["update" ":records" ["fn" ["records"] ["conj" "records" "data-pack"]]]]
+                                           ["->"
+                                            "reel"
+                                            ["assoc" ":store" ["updater" [":store" "reel"] "op" "op-data" "op-id"]]
+                                            ["update" ":records" ["fn" ["records"] ["conj" "records" "data-pack"]]]]]]]],
+                        "reel-schema" ["def"
+                                       "reel-schema"
+                                       ["{}"
+                                        [":records" ["[]"]]
+                                        [":initial-store" "nil"]
+                                        [":store" "nil"]
+                                        [":pointer" "0"]
+                                        [":tab" ":records"]
+                                        [":stopped?" "false"]
+                                        [":display?" "false"]]]},
+                 :procs []},
+         "comp.task" {:ns ["ns"
+                           "reel.comp.task"
+                           [":require"
+                            ["[]" "respo.alias" ":refer" ["[]" "create-comp" "div" "input" "button"]]
+                            ["[]" "hsl.core" ":refer" ["[]" "hsl"]]
+                            ["[]" "respo.comp.text" ":refer" ["[]" "comp-text"]]
+                            ["[]" "respo.comp.space" ":refer" ["[]" "comp-space"]]
+                            ["[]" "respo-ui.style" ":as" "ui"]
+                            ["[]" "respo-ui.style.colors" ":as" "colors"]]],
+                      :defs {"on-input" ["defn"
+                                         "on-input"
+                                         ["task-id"]
+                                         ["fn"
+                                          ["e" "dispatch!"]
+                                          ["dispatch!" ":task/edit" ["[]" "task-id" [":value" "e"]]]]],
+                             "style-done" ["def"
+                                           "style-done"
+                                           ["{}"
+                                            [":width" "32"]
+                                            [":height" "32"]
+                                            [":display" ":inline-block"]
+                                            [":background-color" "colors/attractive"]]],
+                             "on-toggle" ["defn"
+                                          "on-toggle"
+                                          ["task-id"]
+                                          ["fn" ["e" "dispatch!"] ["dispatch!" ":task/toggle" "task-id"]]],
+                             "comp-task" ["def" "comp-task" ["create-comp" ":task" "render"]],
+                             "on-remove" ["defn"
+                                          "on-remove"
+                                          ["task-id"]
+                                          ["fn" ["e" "dispatch!"] ["dispatch!" ":task/remove" "task-id"]]],
+                             "render" ["defn"
+                                       "render"
+                                       ["task"]
+                                       ["fn"
+                                        ["state" "mutate!"]
+                                        ["div"
+                                         ["{}" [":style" "style-container"]]
+                                         ["div"
+                                          ["{}"
+                                           [":style"
+                                            ["merge"
+                                             "style-done"
+                                             ["if" [":done?" "task"] ["{}" [":background-color" "colors/warm"]]]]]
+                                           [":event" ["{}" [":click" ["on-toggle" [":id" "task"]]]]]]]
+                                         ["comp-space" "8" "nil"]
+                                         ["input"
+                                          ["{}"
+                                           [":attrs"
+                                            ["{}" [":value" [":text" "task"]] [":placeholder" "|Content of task"]]]
+                                           [":event" ["{}" [":input" ["on-input" [":id" "task"]]]]]
+                                           [":style" "ui/input"]]]
+                                         ["comp-space" "8" "nil"]
+                                         ["button"
+                                          ["{}"
+                                           [":style"
+                                            ["merge" "ui/button" ["{}" [":background-color" "colors/irreversible"]]]]
+                                           [":event" ["{}" [":click" ["on-remove" [":id" "task"]]]]]]
+                                          ["comp-text" "|Remove" "nil"]]]]],
+                             "style-container" ["def" "style-container" ["{}" [":margin" "|8px 0"] [":height" "32"]]]},
+                      :procs []},
+         "util" {:ns ["ns" "reel.util"],
+                 :defs {"id!" ["defn" "id!" [] ["swap!" "id-ref" "inc"] "@id-ref"],
+                        "id-ref" ["def" "id-ref" ["atom" "0"]]},
+                 :procs []},
+         "comp.reel" {:ns ["ns"
+                           "reel.comp.reel"
+                           [":require"
+                            ["[]" "respo.alias" ":refer" ["[]" "create-comp" "div" "button"]]
+                            ["[]" "hsl.core" ":refer" ["[]" "hsl"]]
+                            ["[]" "respo.comp.debug" ":refer" ["[]" "comp-debug"]]
+                            ["[]" "respo-ui.style" ":as" "ui"]
+                            ["[]" "respo-ui.style.colors" ":as" "colors"]
+                            ["[]" "respo.comp.text" ":refer" ["[]" "comp-text"]]
+                            ["[]" "respo.comp.space" ":refer" ["[]" "comp-space"]]
+                            ["[]" "reel.comp.records" ":refer" ["[]" "comp-records"]]]],
+                      :defs {"on-run" ["defn"
+                                       "on-run"
+                                       ["new-store"]
+                                       ["fn" ["e" "dispatch!"] ["dispatch!" ":reel/run" "new-store"]]],
+                             "comp-reel" ["def" "comp-reel" ["create-comp" ":reel" "render"]],
+                             "on-merge" ["defn"
+                                         "on-merge"
+                                         ["new-store"]
+                                         ["fn" ["e" "dispatch!"] ["dispatch!" ":reel/merge" "new-store"]]],
+                             "style-panel" ["def"
+                                            "style-panel"
+                                            ["{}"
+                                             [":position" ":fixed"]
+                                             [":right" "0"]
+                                             [":bottom" "0"]
+                                             [":transition-duration" "|400ms"]
+                                             [":background-color" "colors/paper"]
+                                             [":opacity" "0.8"]]],
+                             "play-records" ["defn"
+                                             "play-records"
+                                             ["store" "records" "updater"]
+                                             ["if"
+                                              ["empty?" "records"]
+                                              "store"
+                                              ["let"
+                                               [[["[]" "op" "op-data" "op-id"] ["first" "records"]]
+                                                ["next-store" ["updater" "store" "op" "op-data" "op-id"]]]
+                                               ["recur" "next-store" ["rest" "records"] "updater"]]]],
+                             "style-size" ["defn"
+                                           "style-size"
+                                           ["server?"]
+                                           ["{}"
+                                            [":width" ["if" "server?" "600" [".-innerWidth" "js/window"]]]
+                                            [":height" ["if" "server?" "600" [".-innerHeight" "js/window"]]]]],
+                             "render" ["defn"
+                                       "render"
+                                       ["reel" "updater" "server?"]
+                                       ["fn"
+                                        ["state" "mutate!"]
+                                        ["if"
+                                         [":display?" "reel"]
+                                         ["div"
+                                          ["{}" [":style" ["merge" "ui/row" "style-panel" ["style-size" "server?"]]]]
+                                          ["comp-records"
+                                           [":records" "reel"]
+                                           [":pointer" "reel"]
+                                           ["on-recall" "reel" "updater"]]
+                                          ["comp-space" "8" "nil"]
+                                          ["div"
+                                           ["{}"]
+                                           ["div"
+                                            ["{}"]
+                                            ["div"
+                                             ["{}"
+                                              [":style" "ui/clickable-text"]
+                                              [":event"
+                                               ["{}"
+                                                [":click"
+                                                 ["let"
+                                                  [["new-store"
+                                                    ["play-records"
+                                                     [":initial-store" "reel"]
+                                                     [":records" "reel"]
+                                                     "updater"]]]
+                                                  ["on-run" "new-store"]]]]]]
+                                             ["comp-text" "|Run" "nil"]]
+                                            ["div"
+                                             ["{}"
+                                              [":style" "ui/clickable-text"]
+                                              [":event"
+                                               ["{}"
+                                                [":click"
+                                                 ["let"
+                                                  [["new-store"
+                                                    ["play-records"
+                                                     [":initial-store" "reel"]
+                                                     [":records" "reel"]
+                                                     "updater"]]]
+                                                  ["on-merge" "new-store"]]]]]]
+                                             ["comp-text" "|Merge" "nil"]]
+                                            ["div"
+                                             ["{}"
+                                              [":style" "ui/clickable-text"]
+                                              [":event" ["{}" [":click" "on-reset"]]]]
+                                             ["comp-text" "|Reset" "nil"]]
+                                            ["if"
+                                             ["not" [":stopped?" "reel"]]
+                                             ["div"
+                                              ["{}"
+                                               [":style" "ui/clickable-text"]
+                                               [":event" ["{}" [":click" "on-toggle"]]]]
+                                              ["comp-text" "|Close" "nil"]]]]
+                                           ["div" ["{}" [":style" "ui/row"]] ["comp-text" [":store" "reel"] "nil"]]]]
+                                         ["div"
+                                          ["{}"
+                                           [":style" ["merge" "style-link" ["style-size" "server?"]]]
+                                           [":event" ["{}" [":click" "on-toggle"]]]]]]]],
+                             "on-toggle" ["defn" "on-toggle" ["e" "dispatch!"] ["dispatch!" ":reel/toggle" "nil"]],
+                             "style-link" ["def"
+                                           "style-link"
+                                           ["merge"
+                                            "style-panel"
+                                            ["{}" [":transform" "|scale(0.2)"] [":transform-origin" "|100% 100%"]]]],
+                             "on-recall" ["defn"
+                                          "on-recall"
+                                          ["reel" "updater"]
+                                          ["fn"
+                                           ["idx"]
+                                           ["fn"
+                                            ["e" "dispatch!"]
+                                            ["dispatch!"
+                                             ":reel/recall"
+                                             ["[]" "idx" ["replay-store" "reel" "updater" "idx"]]]]]],
+                             "on-reset" ["defn" "on-reset" ["e" "dispatch!"] ["dispatch!" ":reel/reset" "nil"]],
+                             "replay-store" ["defn"
+                                             "replay-store"
+                                             ["reel" "updater" "idx"]
+                                             ["let"
+                                              [["records-slice" ["subvec" [":records" "reel"] "0" "idx"]]]
+                                              ["play-records" [":initial-store" "reel"] "records-slice" "updater"]]]},
+                      :procs []},
+         "comp.container" {:ns ["ns"
+                                "reel.comp.container"
+                                [":require"
+                                 ["[]" "hsl.core" ":refer" ["[]" "hsl"]]
+                                 ["[]" "respo-ui.style" ":as" "ui"]
+                                 ["[]" "respo.alias" ":refer" ["[]" "create-comp" "div" "span"]]
+                                 ["[]" "respo.comp.space" ":refer" ["[]" "comp-space"]]
+                                 ["[]" "respo.comp.text" ":refer" ["[]" "comp-text"]]
+                                 ["[]" "reel.comp.reel" ":refer" ["[]" "comp-reel"]]
+                                 ["[]" "reel.comp.todolist" ":refer" ["[]" "comp-todolist"]]]],
+                           :defs {"render" ["defn"
+                                            "render"
+                                            ["reel" "updater" "server?"]
+                                            ["fn"
+                                             ["state" "mutate!"]
+                                             ["let"
+                                              [["store" [":store" "reel"]]]
+                                              ["div"
+                                               ["{}" [":style" ["merge" "ui/global"]]]
+                                               ["comp-todolist" "store"]
+                                               ["comp-reel" "reel" "updater" "server?"]]]]],
+                                  "comp-container" ["def" "comp-container" ["create-comp" ":container" "render"]]},
+                           :procs []},
+         "comp.todolist" {:ns ["ns"
+                               "reel.comp.todolist"
+                               [":require"
+                                ["[]" "respo.alias" ":refer" ["[]" "create-comp" "div" "button" "input"]]
+                                ["[]" "respo.comp.text" ":refer" ["[]" "comp-text"]]
+                                ["[]" "respo.comp.space" ":refer" ["[]" "comp-space"]]
+                                ["[]" "respo-ui.common" ":refer" ["[]" "init-input" "update-input" "on-input"]]
+                                ["[]" "respo-ui.style" ":as" "ui"]
+                                ["[]" "reel.comp.task" ":refer" ["[]" "comp-task"]]]],
+                          :defs {"style-container" ["def" "style-container" ["{}" [":padding" "8"]]],
+                                 "on-click" ["defn"
+                                             "on-click"
+                                             ["mutate!" "text"]
+                                             ["fn"
+                                              ["state" "dispatch!"]
+                                              ["dispatch!" ":task/add" "text"]
+                                              ["mutate!" "|"]]],
+                                 "render" ["defn"
+                                           "render"
+                                           ["tasks"]
+                                           ["fn"
+                                            ["state" "mutate!"]
+                                            ["div"
+                                             ["{}" [":style" "style-container"]]
+                                             ["div"
+                                              ["{}"]
+                                              ["input"
+                                               ["{}"
+                                                [":style" "ui/input"]
+                                                [":event" ["{}" [":input" ["on-input" "mutate!"]]]]
+                                                [":attrs" ["{}" [":placeholder" "|Task to add..."] [":value" "state"]]]]]
+                                              ["comp-space" "8" "nil"]
+                                              ["button"
+                                               ["{}"
+                                                [":style" "ui/button"]
+                                                [":event" ["{}" [":click" ["on-click" "mutate!" "state"]]]]]
+                                               ["comp-text" "|Add" "nil"]]]
+                                             ["div"
+                                              ["{}"]
+                                              ["->>"
+                                               "tasks"
+                                               ["map" ["fn" ["task"] ["[]" [":id" "task"] ["comp-task" "task"]]]]]]]]],
+                                 "comp-todolist" ["def"
+                                                  "comp-todolist"
+                                                  ["create-comp" ":todolist" "init-input" "update-input" "render"]]},
+                          :procs []},
+         "main" {:ns ["ns"
+                      "reel.main"
+                      [":require"
+                       ["[]"
+                        "respo.core"
+                        ":refer"
+                        ["[]" "render!" "clear-cache!" "falsify-stage!" "render-element" "gc-states!"]]
+                       ["[]" "reel.comp.container" ":refer" ["[]" "comp-container"]]
+                       ["[]" "cljs.reader" ":refer" ["[]" "read-string"]]
+                       ["[]" "reel.util" ":refer" ["[]" "id!"]]
+                       ["[]" "reel.reel" ":refer" ["[]" "reel-schema" "reel-updater"]]
+                       ["[]" "reel.updater" ":refer" ["[]" "updater"]]]],
+                 :defs {"dispatch!" ["defn"
+                                     "dispatch!"
+                                     ["op" "op-data"]
+                                     ["let"
+                                      [["op-id" ["id!"]]
+                                       ["new-reel" ["reel-updater" "updater" "@reel-ref" "op" "op-data" "op-id"]]]
+                                      ["--" "println" "|Reel:" "new-reel"]
+                                      ["reset!" "reel-ref" "new-reel"]]],
+                        "reel-ref" ["defonce"
+                                    "reel-ref"
+                                    ["atom"
+                                     ["->"
+                                      "reel-schema"
+                                      ["assoc" ":initial-store" ["list"]]
+                                      ["assoc" ":store" ["list"]]]]],
+                        "-main!" ["defn"
+                                  "-main!"
+                                  []
+                                  ["enable-console-print!"]
+                                  ["if"
+                                   ["not" ["empty?" "ssr-stages"]]
+                                   ["let"
+                                    [["target" [".querySelector" "js/document" "|#app"]]]
+                                    ["falsify-stage!"
+                                     "target"
+                                     ["render-element" ["comp-container" "@reel-ref" "updater" "true"] "states-ref"]
+                                     "dispatch!"]]]
+                                  ["render-app!"]
+                                  ["add-watch" "reel-ref" ":gc" ["fn" [] ["gc-states!" "states-ref"]]]
+                                  ["add-watch" "reel-ref" ":changes" "render-app!"]
+                                  ["add-watch" "states-ref" ":changes" "render-app!"]
+                                  ["println" "|app started!"]],
+                        "on-jsload!" ["defn"
+                                      "on-jsload!"
+                                      []
+                                      ["clear-cache!"]
+                                      ["render-app!"]
+                                      ["println" "|code update."]],
+                        "render-app!" ["defn"
+                                       "render-app!"
+                                       []
+                                       ["let"
+                                        [["target" [".querySelector" "js/document" "|#app"]]]
+                                        ["render!"
+                                         ["comp-container" "@reel-ref" "updater" "false"]
+                                         "target"
+                                         "dispatch!"
+                                         "states-ref"]]],
+                        "ssr-stages" ["def"
+                                      "ssr-stages"
+                                      ["let"
+                                       [["ssr-element" [".querySelector" "js/document" "|#ssr-stages"]]
+                                        ["ssr-markup" [".getAttribute" "ssr-element" "|content"]]]
+                                       ["read-string" "ssr-markup"]]],
+                        "states-ref" ["defonce" "states-ref" ["atom" ["{}"]]]},
+                 :procs [["set!" [".-onload" "js/window"] "-main!"]]}}}

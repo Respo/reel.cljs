@@ -25,19 +25,24 @@
         (div {:attrs {:id "app" :innerHTML html-content}})
         (script {:attrs {:src "main.js"}})))))
 
-(defn generate-html [ssr-stages]
+(defn generate-html []
   (let [ reel (-> reel-schema
                   (assoc :store (list))
                   (assoc :initial-store (list)))
-         tree (comp-container reel ssr-stages true)
+         tree (comp-container reel #{:shell} true)
          html-content (make-string tree)]
-    (html-dsl {:build? true} html-content ssr-stages)))
+    (html-dsl {:build? true} html-content #{:shell})))
+
+(defn generate-empty-html []
+  (html-dsl {:build? true} "" {}))
 
 (defn spit [file-name content]
   (let [fs (js/require "fs")]
     (.writeFileSync fs file-name content)))
 
 (defn -main []
-  (spit "target/index.html" (generate-html #{:shell})))
+  (if (= js/process.env.env "dev")
+    (spit "target/dev.html" (generate-empty-html))
+    (spit "target/index.html" (generate-html))))
 
 (-main)

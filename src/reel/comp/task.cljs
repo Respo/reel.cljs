@@ -9,14 +9,14 @@
 
 (defn on-input [task-id] (fn [e dispatch!] (dispatch! :task/edit [task-id (:value e)])))
 
-(def style-container {:height 32, :margin "8px 0"})
-
 (def style-done
-  {:background-color colors/attractive, :width 32, :display :inline-block, :height 32})
+  {:width 32, :height 32, :display :inline-block, :background-color colors/attractive})
 
 (defn on-toggle [task-id] (fn [e dispatch!] (dispatch! :task/toggle task-id)))
 
 (defn on-remove [task-id] (fn [e dispatch!] (dispatch! :task/remove task-id)))
+
+(def style-container {:margin "8px 0", :height 32})
 
 (defn render [task]
   (fn [state mutate!]
@@ -27,9 +27,9 @@
        :event {:click (on-toggle (:id task))}})
      (comp-space 8 nil)
      (input
-      {:style ui/input,
+      {:attrs {:value (:text task), :placeholder "Content of task"},
        :event {:input (on-input (:id task))},
-       :attrs {:placeholder "Content of task", :value (:text task)}})
+       :style ui/input})
      (comp-space 8 nil)
      (button
       {:style (merge ui/button {:background-color colors/irreversible}),

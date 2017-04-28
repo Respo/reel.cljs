@@ -7,10 +7,10 @@
             [respo-ui.style :as ui]
             [reel.comp.task :refer [comp-task]]))
 
+(def style-container {:padding 8})
+
 (defn on-click [mutate! text]
   (fn [state dispatch!] (dispatch! :task/add text) (mutate! "")))
-
-(def style-container {:padding 8})
 
 (defn render [tasks]
   (fn [state mutate!]
