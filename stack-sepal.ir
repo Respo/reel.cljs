@@ -408,10 +408,10 @@
                           :defs {"style-container" ["def" "style-container" ["{}" [":padding" "8"]]],
                                  "on-click" ["defn"
                                              "on-click"
-                                             ["cursor"]
+                                             ["state" "cursor"]
                                              ["fn"
                                               ["e" "dispatch!"]
-                                              ["dispatch!" ":task/add" "nil"]
+                                              ["dispatch!" ":task/add" "state"]
                                               ["dispatch!" ":states" ["[]" "cursor" "|"]]]],
                                  "comp-todolist" ["def"
                                                   "comp-todolist"
@@ -437,7 +437,7 @@
                                                         ["button"
                                                          ["{}"
                                                           [":style" "ui/button"]
-                                                          [":event" ["{}" [":click" ["on-click" "cursor"]]]]]
+                                                          [":event" ["{}" [":click" ["on-click" "state" "cursor"]]]]]
                                                          ["comp-text" "|Add" "nil"]]]
                                                        ["div"
                                                         ["{}"]

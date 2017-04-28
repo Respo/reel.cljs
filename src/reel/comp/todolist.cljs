@@ -8,8 +8,8 @@
 
 (def style-container {:padding 8})
 
-(defn on-click [cursor]
-  (fn [e dispatch!] (dispatch! :task/add nil) (dispatch! :states [cursor ""])))
+(defn on-click [state cursor]
+  (fn [e dispatch!] (dispatch! :task/add state) (dispatch! :states [cursor ""])))
 
 (defn on-input [cursor] (fn [e dispatch!] (dispatch! :states [cursor (:value e)])))
 
@@ -29,6 +29,6 @@
              :attrs {:placeholder "Task to add...", :value state}})
            (comp-space 8 nil)
            (button
-            {:style ui/button, :event {:click (on-click cursor)}}
+            {:style ui/button, :event {:click (on-click state cursor)}}
             (comp-text "Add" nil)))
           (div {} (->> tasks (map (fn [task] [(:id task) (comp-task task)]))))))))))
