@@ -26,7 +26,7 @@ Functions you need from namespaces:
 [reel.schema :as reel-schema]
 ```
 
-Notice that `store` now lives as part of `reel` map.
+Notice that `store` now lives inside `reel` map.
 
 Instead of `*store`, you need `*reel` for global states. For example:
 
@@ -51,17 +51,16 @@ And we need a `reel-updater` besides the familiar `updater` we used in Respo:
 Make sure you watch `*reel` and initialize `reel.core/*code` inside `main!` function:
 
 ```clojure
-(add-watch *reel :changes (fn [] (render-app! render! false)))
-(reset! *code {:updater updater, :view comp-container, :base schema/store})
+(add-watch *reel :changes (fn [] (render-app! render!)))
+(reset! *code {:updater updater, :view comp-container, :base store})
 ```
 
 Call `handle-reload!` with so many arguments to reload store and element caches:
 
 ```clojure
 (defn reload! []
-  (handle-reload! (:inital schema/store) updater comp-container *reel clear-cache!)
-  (render-app! render! false)
-  (println "code update."))
+  (handle-reload! store updater comp-container *reel clear-cache!)
+  (render-app! render!))
 ```
 
 To use records panel, please refer to `comp-reel`. Not indent to document that yet.
