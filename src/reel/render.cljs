@@ -3,7 +3,7 @@
   (:require [respo.render.html :refer [make-string]]
             [shell-page.core :refer [make-page spit slurp]]
             [reel.comp.container :refer [comp-container]]
-            [reel.reel :refer [reel-schema]]))
+            [reel.schema :as schema]))
 
 (def base-info
   {:title "Reel", :icon "http://repo-cdn.b0.upaiyun.com/logo/respo.png", :ssr nil})
@@ -19,7 +19,7 @@
 (def preview? (= "preview" js/process.env.prod))
 
 (defn prod-page []
-  (let [html-content (make-string (comp-container (:initial-store reel-schema)))
+  (let [html-content (make-string (comp-container schema/reel identity true))
         manifest (.parse js/JSON (slurp "dist/assets-manifest.json"))
         cljs-manifest (.parse js/JSON (slurp "dist/manifest.json"))
         cdn (if preview? "" "http://repo-cdn.b0.upaiyun.com/smallist/")

@@ -8,10 +8,9 @@
 
 (def style-container {:padding 8})
 
-(defn on-click [state cursor]
-  (fn [e dispatch!] (dispatch! :task/add state) (dispatch! :states [cursor ""])))
+(defn on-click [state] (fn [e dispatch! mutate!] (dispatch! :task/add state) (mutate! "")))
 
-(defn on-input [cursor] (fn [e dispatch!] (dispatch! :states [cursor (:value e)])))
+(defn on-input [e dispatch! mutate!] (mutate! (:value e)))
 
 (defcomp
  comp-todolist
@@ -22,10 +21,7 @@
     (div
      {}
      (input
-      {:placeholder "Task to add...",
-       :value state,
-       :style ui/input,
-       :on {:input (on-input *cursor*)}})
+      {:placeholder "Task to add...", :value state, :style ui/input, :on {:input on-input}})
      (=< 8 nil)
-     (button {:style ui/button, :on {:click (on-click state *cursor*)}} (<> "Add")))
+     (button {:style ui/button, :on {:click (on-click state)}} (<> "Add")))
     (div {} (->> tasks (map (fn [task] [(:id task) (comp-task task)])))))))

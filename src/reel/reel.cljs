@@ -31,12 +31,3 @@
         (-> reel
             (assoc :store (updater (:store reel) op op-data op-id))
             (update :records (fn [records] (conj records data-pack))))))))
-
-(def reel-schema
-  {:records [],
-   :initial-store nil,
-   :store nil,
-   :pointer 0,
-   :tab :records,
-   :stopped? false,
-   :display? false})

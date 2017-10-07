@@ -4,34 +4,35 @@
             [reel.comp.container :refer [comp-container]]
             [cljs.reader :refer [read-string]]
             [reel.util :refer [id!]]
-            [reel.reel :refer [reel-schema reel-updater]]
+            [reel.reel :refer [reel-updater]]
+            [reel.schema :as schema]
             [reel.updater :refer [updater]]))
 
-(defonce reel-ref
+(defonce *reel
   (atom
-   (-> reel-schema
+   (-> schema/reel
        (assoc :initial-store {:states {}, :tasks (list)})
        (assoc :store {:states {}, :tasks (list)}))))
 
 (defn dispatch! [op op-data]
   (println "Dispatch!" op op-data)
-  (let [op-id (id!), new-reel (reel-updater updater @reel-ref op op-data op-id)]
+  (let [op-id (id!), new-reel (reel-updater updater @*reel op op-data op-id)]
     (comment println "Reel:" new-reel)
-    (reset! reel-ref new-reel)))
+    (reset! *reel new-reel)))
 
 (def mount-target (.querySelector js/document ".app"))
 
-(defn render-app! [renderer]
-  (renderer mount-target (comp-container @reel-ref updater false) dispatch!))
+(defn render-app! [renderer server?]
+  (renderer mount-target (comp-container @*reel updater server?) dispatch!))
 
 (def ssr? (some? (.querySelector js/document "meta.respo-ssr")))
 
 (defn main! []
-  (if ssr? (render-app! realize-ssr!))
-  (render-app! render!)
-  (add-watch reel-ref :changes (fn [] (render-app! render!)))
+  (if ssr? (render-app! realize-ssr! true))
+  (render-app! render! false)
+  (add-watch *reel :changes (fn [] (render-app! render! false)))
   (println "App started!"))
 
-(defn reload! [] (clear-cache!) (render-app! render!) (println "code update."))
+(defn reload! [] (clear-cache!) (render-app! render! false) (println "code update."))
 
 (set! (.-onload js/window) main!)
