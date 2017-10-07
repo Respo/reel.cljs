@@ -29,7 +29,7 @@
       (recur next-store (rest records) updater))))
 
 (defn replay-store [reel updater idx]
-  (let [records-slice (if (some? idx) (subvec (:records reel) 0 idx) (:records reel))]
+  (let [records-slice (if (:stopped? reel) (subvec (:records reel) 0 idx) (:records reel))]
     (play-records (:initial-store reel) records-slice updater)))
 
 (defonce *code (atom nil))

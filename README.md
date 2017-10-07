@@ -22,8 +22,8 @@ Functions you need from namespaces:
 
 ```clojure
 [reel.util :refer [id!]]
-[reel.core :refer [reel-updater replay-store *code handle-reload!]]
-[reel.schema :as schema]
+[reel.core :refer [reel-updater *code handle-reload!]]
+[reel.schema :as reel-schema]
 ```
 
 Notice that `store` now lives as part of `reel` map.
@@ -34,8 +34,8 @@ Instead of `*store`, you need `*reel` for global states. For example:
 (def store {:states {} :tasks (list)})
 
 (defonce *reel
-  (atom (-> reel-schema
-            (assoc :initial store)
+  (atom (-> reel-schema/reel
+            (assoc :base store)
             (assoc :store store))))
 ```
 
@@ -52,7 +52,7 @@ Make sure you watch `*reel` and initialize `reel.core/*code` inside `main!` func
 
 ```clojure
 (add-watch *reel :changes (fn [] (render-app! render! false)))
-(reset! *code {:updater updater, :view comp-container, :initial schema/store})
+(reset! *code {:updater updater, :view comp-container, :base schema/store})
 ```
 
 Call `handle-reload!` with so many arguments to reload store and element caches:

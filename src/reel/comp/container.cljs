@@ -15,4 +15,5 @@
    (div
     {:style (merge ui/global)}
     (comp-todolist states (:tasks store))
-    (comp-reel reel updater server?))))
+    (comp-reel reel updater server?)
+    (<> reel))))
