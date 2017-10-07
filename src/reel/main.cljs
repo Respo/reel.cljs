@@ -32,25 +32,15 @@
   (add-watch *reel :changes (fn [] (render-app! render! false)))
   (println "App started!"))
 
-(defonce *previous-view (atom comp-container))
-
 (defn reload! []
   (if (or (not (identical? updater (:updater @*code)))
           (not (identical? (:initial schema/store) (:initial @*code))))
     (do
      (reset! *code (merge {:updater updater, :initial (:initial schema/store)}))
-     (swap!
-      *reel
-      assoc
-      :store
-      (let [result (replay-store @*reel updater (:pointer @*reel))]
-        (println "result:" result)
-        result))))
+     (swap! *reel assoc :store (replay-store @*reel updater (:pointer @*reel)))))
   (if (not (identical? comp-container (:view @*code)))
     (do (swap! *code assoc :view comp-container) (clear-cache!)))
   (render-app! render! false)
   (println "code update."))
-
-(defonce *previous-updater (atom updater))
 
 (set! (.-onload js/window) main!)
