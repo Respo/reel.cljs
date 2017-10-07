@@ -1,14 +1,26 @@
 
-Reel: time travel demo in Respo
+Reel: state management library for Respo(WIP...)
 ----
 
-Store abstraction for Respo. Built as [actions-in-recorder](https://github.com/mvc-works/actions-in-recorder).
+> as a time traveling debugger.
 
-Demo http://repo.respo.site/reel/target/dev.html
+Built as [actions-in-recorder](https://github.com/mvc-works/actions-in-recorder).
+
+Demo http://repo.respo.site/reel/
 
 ### Usage
 
+> WIP... latest code not released yet, docs not ready.
+
 [![Clojars Project](https://img.shields.io/clojars/v/respo/reel.svg)](https://clojars.org/respo/reel)
+
+```edn
+[respo/reel "0.1.0"]
+```
+
+Browse [src/reel/main.cljs](https://github.com/Respo/reel/blob/master/src/reel/main.cljs) to see how to use it.
+
+> WIP... guide is outdated...
 
 Functions you need from namespaces:
 

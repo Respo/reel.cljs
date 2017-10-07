@@ -22,7 +22,7 @@
   (let [html-content (make-string (comp-container schema/reel identity true))
         manifest (.parse js/JSON (slurp "dist/assets-manifest.json"))
         cljs-manifest (.parse js/JSON (slurp "dist/manifest.json"))
-        cdn (if preview? "" "http://repo-cdn.b0.upaiyun.com/smallist/")
+        cdn (if preview? "" "http://repo-cdn.b0.upaiyun.com/reel/")
         prefix-cdn (fn [x] (str cdn x))]
     (make-page
      html-content
