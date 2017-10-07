@@ -31,3 +31,14 @@
 (defn replay-store [reel updater idx]
   (let [records-slice (if (some? idx) (subvec (:records reel) 0 idx) (:records reel))]
     (play-records (:initial-store reel) records-slice updater)))
+
+(defonce *code (atom nil))
+
+(defn handle-reload! [store0 updater comp-container *reel clear-cache!]
+  (if (or (not (identical? updater (:updater @*code)))
+          (not (identical? store0 (:initial @*code))))
+    (do
+     (swap! *code merge {:updater updater, :initial store0})
+     (swap! *reel assoc :store (replay-store @*reel updater (:pointer @*reel)))))
+  (if (not (identical? comp-container (:view @*code)))
+    (do (swap! *code assoc :view comp-container) (clear-cache!))))

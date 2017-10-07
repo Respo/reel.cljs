@@ -4,7 +4,7 @@
             [reel.comp.container :refer [comp-container]]
             [cljs.reader :refer [read-string]]
             [reel.util :refer [id!]]
-            [reel.core :refer [reel-updater replay-store]]
+            [reel.core :refer [reel-updater replay-store *code handle-reload!]]
             [reel.schema :as schema]
             [reel.updater :refer [updater]]))
 
@@ -19,8 +19,6 @@
     (comment println "Reel:" new-reel)
     (reset! *reel new-reel)))
 
-(defonce *code (atom {:updater updater, :view comp-container, :initial schema/store}))
-
 (def mount-target (.querySelector js/document ".app"))
 
 (defn render-app! [renderer server?]
@@ -30,16 +28,11 @@
   (if ssr? (render-app! realize-ssr! true))
   (render-app! render! false)
   (add-watch *reel :changes (fn [] (render-app! render! false)))
+  (reset! *code {:updater updater, :view comp-container, :initial schema/store})
   (println "App started!"))
 
 (defn reload! []
-  (if (or (not (identical? updater (:updater @*code)))
-          (not (identical? (:initial schema/store) (:initial @*code))))
-    (do
-     (reset! *code (merge {:updater updater, :initial (:initial schema/store)}))
-     (swap! *reel assoc :store (replay-store @*reel updater (:pointer @*reel)))))
-  (if (not (identical? comp-container (:view @*code)))
-    (do (swap! *code assoc :view comp-container) (clear-cache!)))
+  (handle-reload! (:inital schema/store) updater comp-container *reel clear-cache!)
   (render-app! render! false)
   (println "code update."))
 

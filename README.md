@@ -1,16 +1,14 @@
 
-Reel: state management library for Respo(WIP...)
+Reel: state management library for Respo
 ----
 
-> as a time traveling debugger.
+> as a time traveling debugger. This is exprimental technology.
 
 Built as [actions-in-recorder](https://github.com/mvc-works/actions-in-recorder).
 
 Demo http://repo.respo.site/reel/
 
 ### Usage
-
-> WIP... latest code not released yet, docs not ready.
 
 [![Clojars Project](https://img.shields.io/clojars/v/respo/reel.svg)](https://clojars.org/respo/reel)
 
@@ -20,30 +18,17 @@ Demo http://repo.respo.site/reel/
 
 Browse [src/reel/main.cljs](https://github.com/Respo/reel/blob/master/src/reel/main.cljs) to see how to use it.
 
-> WIP... guide is outdated...
-
 Functions you need from namespaces:
 
 ```clojure
-[reel.core :refer [reel-schema reel-updater]]
-[reel.updater :refer [updater]
-[reel.comp.reel :refer [comp-reel]]
+[reel.util :refer [id!]]
+[reel.core :refer [reel-updater replay-store *code handle-reload!]]
+[reel.schema :as schema]
 ```
 
-Notice that `store` now lives as part of `reel` HashMap:
+Notice that `store` now lives as part of `reel` map.
 
-```clojure
-(def reel-schema
-  {:initial nil,
-   :store nil, ; <---- store here, you have to add initial-store
-   :records [],
-   :pointer nil,
-   :stopped? false,
-   :display? false})
-```
-
-Instead of `*store`, you need `*reel` now.
-In a todolist, the initial store is `(list)`:
+Instead of `*store`, you need `*reel` for global states. For example:
 
 ```clojure
 (def store {:states {} :tasks (list)})
@@ -63,17 +48,23 @@ And we need a `reel-updater` besides the familiar `updater` we used in Respo:
     (reset! *reel new-reel)))
 ```
 
-If you are going to use the debugger, add `updater` as a parameter:
+Make sure you watch `*reel` and initialize `reel.core/*code` inside `main!` function:
 
 ```clojure
-(comp-container @*reel updater)
+(add-watch *reel :changes (fn [] (render-app! render! false)))
+(reset! *code {:updater updater, :view comp-container, :initial schema/store})
 ```
 
-To use the debugger as a component:
+Call `handle-reload!` with so many arguments to reload store and element caches:
 
 ```clojure
-(comp-reel reel updater false) ; false for server?
+(defn reload! []
+  (handle-reload! (:inital schema/store) updater comp-container *reel clear-cache!)
+  (render-app! render! false)
+  (println "code update."))
 ```
+
+To use records panel, please refer to `comp-reel`. Not indent to document that yet.
 
 ### Develop
 

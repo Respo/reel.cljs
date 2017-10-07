@@ -1,6 +1,6 @@
 
 (ns reel.util )
 
-(def id-ref (atom 0))
+(def *id (atom 0))
 
-(defn id! [] (swap! id-ref inc) @id-ref)
+(defn id! [] (swap! *id inc) @*id)
