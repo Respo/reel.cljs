@@ -1,10 +1,10 @@
 
 (ns reel.comp.records
-  (:require [respo.alias :refer [create-comp div]]
+  (:require-macros [respo.macros :refer [defcomp <> div span]])
+  (:require [respo.core :refer [create-comp]]
             [respo-ui.style :as ui]
             [respo-ui.style.colors :as colors]
-            [respo.comp.text :refer [comp-text]]
-            [respo.comp.space :refer [comp-space]]))
+            [respo.comp.space :refer [=<]]))
 
 (def style-record {:cursor :pointer, :padding "0 8px"})
 
@@ -19,23 +19,22 @@
    :display :inline-block,
    :vertical-align :middle})
 
-(defn render [records pointer on-recall]
-  (fn [state mutate!]
-    (div
-     {:style style-container}
-     (->> records
-          (cons [:initial nil :initial])
-          (map-indexed
-           (fn [idx record]
-             [(last record)
-              (div
-               {:style (merge
-                        style-record
-                        (if (= pointer idx)
-                          {:background-color colors/attractive, :color :white})),
-                :event {:click (on-recall idx)}}
-               (comp-text (first record) nil)
-               (comp-space 8 nil)
-               (comp-text (get record 1) style-data))]))))))
-
-(def comp-records (create-comp :records render))
+(defcomp
+ comp-records
+ (records pointer on-recall)
+ (div
+  {:style style-container}
+  (->> records
+       (cons [:initial nil :initial])
+       (map-indexed
+        (fn [idx record]
+          [(last record)
+           (div
+            {:style (merge
+                     style-record
+                     (if (= pointer idx)
+                       {:background-color colors/attractive, :color :white})),
+             :event {:click (on-recall idx)}}
+            (<> (first record))
+            (=< 8 nil)
+            (<> span (get record 1) style-data))])))))

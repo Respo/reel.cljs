@@ -1,6 +1,6 @@
 
 (ns reel.main
-  (:require [respo.core :refer [render! clear-cache! falsify-stage! render-element]]
+  (:require [respo.core :refer [render! clear-cache! realize-ssr!]]
             [reel.comp.container :refer [comp-container]]
             [cljs.reader :refer [read-string]]
             [reel.util :refer [id!]]
@@ -19,27 +19,19 @@
     (comment println "Reel:" new-reel)
     (reset! reel-ref new-reel)))
 
-(defn render-app! []
-  (let [target (.querySelector js/document "#app")]
-    (render! (comp-container @reel-ref updater false) target dispatch!)))
+(def mount-target (.querySelector js/document ".app"))
 
-(def ssr-stages
-  (let [ssr-element (.querySelector js/document "#ssr-stages")
-        ssr-markup (.getAttribute ssr-element "content")]
-    (read-string ssr-markup)))
+(defn render-app! [renderer]
+  (renderer mount-target (comp-container @reel-ref updater false) dispatch!))
 
-(defn -main! []
-  (enable-console-print!)
-  (if (not (empty? ssr-stages))
-    (let [target (.querySelector js/document "#app")]
-      (falsify-stage!
-       target
-       (render-element (comp-container @reel-ref updater true))
-       dispatch!)))
-  (render-app!)
-  (add-watch reel-ref :changes render-app!)
-  (println "app started!"))
+(def ssr? (some? (.querySelector js/document "meta.respo-ssr")))
 
-(defn on-jsload! [] (clear-cache!) (render-app!) (println "code update."))
+(defn main! []
+  (if ssr? (render-app! realize-ssr!))
+  (render-app! render!)
+  (add-watch reel-ref :changes (fn [] (render-app! render!)))
+  (println "App started!"))
 
-(set! (.-onload js/window) -main!)
+(defn reload! [] (clear-cache!) (render-app! render!) (println "code update."))
+
+(set! (.-onload js/window) main!)

@@ -1,12 +1,12 @@
 
 (ns reel.comp.reel
-  (:require [respo.alias :refer [create-comp div button]]
+  (:require-macros [respo.macros :refer [defcomp <> div button]])
+  (:require [respo.core :refer [create-comp]]
             [hsl.core :refer [hsl]]
-            [respo.comp.debug :refer [comp-debug]]
+            [respo.comp.inspect :refer [comp-inspect]]
             [respo-ui.style :as ui]
             [respo-ui.style.colors :as colors]
-            [respo.comp.text :refer [comp-text]]
-            [respo.comp.space :refer [comp-space]]
+            [respo.comp.space :refer [=<]]
             [reel.comp.records :refer [comp-records]]))
 
 (defn on-run [new-store] (fn [e dispatch!] (dispatch! :reel/run new-store)))
@@ -45,42 +45,36 @@
 
 (defn on-reset [e dispatch!] (dispatch! :reel/reset nil))
 
-(def comp-reel
-  (create-comp
-   :reel
-   (fn [reel updater server?]
-     (fn [state mutate!]
-       (if (:display? reel)
-         (div
-          {:style (merge ui/row style-panel (style-size server?))}
-          (comp-records (:records reel) (:pointer reel) (on-recall reel updater))
-          (comp-space 8 nil)
-          (div
-           {}
-           (div
-            {}
-            (div
-             {:style ui/clickable-text,
-              :event {:click (let [new-store (play-records
-                                              (:initial-store reel)
-                                              (:records reel)
-                                              updater)]
-                        (on-run new-store))}}
-             (comp-text "Run" nil))
-            (div
-             {:style ui/clickable-text,
-              :event {:click (let [new-store (play-records
-                                              (:initial-store reel)
-                                              (:records reel)
-                                              updater)]
-                        (on-merge new-store))}}
-             (comp-text "Merge" nil))
-            (div
-             {:style ui/clickable-text, :event {:click on-reset}}
-             (comp-text "Reset" nil))
-            (if (not (:stopped? reel))
-              (div
-               {:style ui/clickable-text, :event {:click on-toggle}}
-               (comp-text "Close" nil))))
-           (div {:style ui/row} (comp-text (:store reel) nil))))
-         (div {:style (merge style-link (style-size server?)), :event {:click on-toggle}}))))))
+(defcomp
+ comp-reel
+ (reel updater server?)
+ (if (:display? reel)
+   (div
+    {:style (merge ui/row style-panel (style-size server?))}
+    (comp-records (:records reel) (:pointer reel) (on-recall reel updater))
+    (=< 8 nil)
+    (div
+     {}
+     (div
+      {}
+      (div
+       {:style ui/clickable-text,
+        :on {:click (let [new-store (play-records
+                                     (:initial-store reel)
+                                     (:records reel)
+                                     updater)]
+               (on-run new-store))}}
+       (<> "Run"))
+      (div
+       {:style ui/clickable-text,
+        :on {:click (let [new-store (play-records
+                                     (:initial-store reel)
+                                     (:records reel)
+                                     updater)]
+               (on-merge new-store))}}
+       (<> "Merge"))
+      (div {:style ui/clickable-text, :event {:click on-reset}} (<> "Reset"))
+      (if (not (:stopped? reel))
+        (div {:style ui/clickable-text, :event {:click on-toggle}} (<> "Close"))))
+     (div {:style ui/row} (<> (:store reel)))))
+   (div {:style (merge style-link (style-size server?)), :on {:click on-toggle}})))

@@ -64,7 +64,7 @@ To use the debugger as a component:
 
 ### Develop
 
-Workflow https://github.com/mvc-works/stack-workflow
+Workflow https://github.com/mvc-works/coworkflow
 
 ### License
 
