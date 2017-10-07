@@ -3,7 +3,7 @@
   :resource-paths #{"src"}
   :dependencies '[])
 
-(def +version+ "0.2.0-alpha")
+(def +version+ "0.2.0-alpha2")
 
 (deftask build []
   (comp
