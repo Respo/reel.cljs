@@ -26,16 +26,15 @@ Notice that `store` now lives as part of `reel` HashMap:
    :store nil, ; <---- store here, you have to add initial-store
    :records [],
    :pointer 0,
-   :tab :records,
    :stopped? false,
    :display? false})
 ```
 
-Instead of `store-ref`, you need `reel-ref` now.
+Instead of `*store`, you need `*reel` now.
 In a todolist, the initial store is `(list)`:
 
 ```clojure
-(defonce reel-ref
+(defonce *reel
   (atom (-> reel-schema
             (assoc :initial-store ({:states {} :tasks (list)}))
             (assoc :store ({:states {} :tasks (list)})))))
@@ -46,14 +45,14 @@ And we need a `reel-updater` besides the familiar `updater` we used in Respo:
 ```clojure
 (defn dispatch! [op op-data]
   (let [op-id (id!),
-        new-reel (reel-updater updater @reel-ref op op-data op-id)]
-    (reset! reel-ref new-reel)))
+        new-reel (reel-updater updater @*reel op op-data op-id)]
+    (reset! *reel new-reel)))
 ```
 
 If you are going to use the debugger, add `updater` as a parameter:
 
 ```clojure
-(comp-container @reel-ref updater)
+(comp-container @*reel updater)
 ```
 
 To use the debugger as a component:

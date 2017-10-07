@@ -4,27 +4,18 @@
 (defn reel-updater [updater reel op op-data op-id]
   (comment println "Name:" (name op))
   (if (string/starts-with? (str op) ":reel/")
-    (case op
-      :reel/toggle (update reel :display? not)
-      :reel/recall
-        (let [[idx a-store] op-data]
-          (-> reel (assoc :pointer idx) (assoc :stopped? true) (assoc :store a-store)))
-      :reel/run
-        (-> reel (assoc :store op-data) (assoc :stopped? false) (assoc :pointer nil))
-      :reel/merge
-        (-> reel
-            (assoc :store op-data)
-            (assoc :initial-store op-data)
-            (assoc :stopped? false)
-            (assoc :pointer nil)
-            (assoc :records []))
-      :reel/reset
-        (-> reel
-            (assoc :store (:initial-store reel))
-            (assoc :pointer nil)
-            (assoc :records [])
-            (assoc :stopped? false))
-      (do (println "Unknown reel/ op:" op) reel))
+    (merge
+     reel
+     (case op
+       :reel/toggle {:display? (not (:display? reel))}
+       :reel/recall
+         (let [[idx a-store] op-data] {:pointer idx, :stopped? true, :store a-store})
+       :reel/run {:store op-data, :stopped? false, :pointer nil}
+       :reel/merge
+         {:store op-data, :initial-store op-data, :stopped? false, :pointer nil, :records []}
+       :reel/reset
+         {:store (:initial-store reel), :pointer nil, :records [], :stopped? false}
+       (do (println "Unknown reel/ op:" op) nil)))
     (let [data-pack [op op-data op-id]]
       (if (:stopped? reel)
         (-> reel (update :records (fn [records] (conj records data-pack))))
@@ -39,5 +30,5 @@
       (recur next-store (rest records) updater))))
 
 (defn replay-store [reel updater idx]
-  (let [records-slice (subvec (:records reel) 0 idx)]
+  (let [records-slice (if (some? idx) (subvec (:records reel) 0 idx) (:records reel))]
     (play-records (:initial-store reel) records-slice updater)))

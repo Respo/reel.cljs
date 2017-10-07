@@ -4,17 +4,14 @@
             [reel.comp.container :refer [comp-container]]
             [cljs.reader :refer [read-string]]
             [reel.util :refer [id!]]
-            [reel.core :refer [reel-updater]]
+            [reel.core :refer [reel-updater replay-store]]
             [reel.schema :as schema]
             [reel.updater :refer [updater]]))
 
 (def ssr? (some? (.querySelector js/document "meta.respo-ssr")))
 
 (defonce *reel
-  (atom
-   (-> schema/reel
-       (assoc :initial-store {:states {}, :tasks (list)})
-       (assoc :store {:states {}, :tasks (list)}))))
+  (atom (-> schema/reel (assoc :initial-store schema/store) (assoc :store schema/store))))
 
 (defn dispatch! [op op-data]
   (println "Dispatch!" op op-data)
@@ -38,12 +35,19 @@
 (defonce *previous-updater (atom updater))
 
 (defn reload! []
-  (clear-cache!)
+  (if (not (identical? updater @*previous-updater))
+    (do
+     (reset! *previous-updater updater)
+     (swap!
+      *reel
+      assoc
+      :store
+      (let [result (replay-store @*reel updater (:pointer @*reel))]
+        (println "result:" result)
+        result))))
+  (if (not (identical? comp-container @*previous-view))
+    (do (reset! *previous-view comp-container) (clear-cache!)))
   (render-app! render! false)
-  (println "Comparing updater:" (identical? updater @*previous-updater))
-  (println "Comparing view:" (identical? comp-container @*previous-view))
-  (reset! *previous-updater updater)
-  (reset! *previous-view comp-container)
   (println "code update."))
 
 (set! (.-onload js/window) main!)
