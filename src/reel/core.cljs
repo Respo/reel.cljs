@@ -1,5 +1,5 @@
 
-(ns reel.reel (:require [clojure.string :as string]))
+(ns reel.core (:require [clojure.string :as string]))
 
 (defn reel-updater [updater reel op op-data op-id]
   (comment println "Name:" (name op))
@@ -31,3 +31,13 @@
         (-> reel
             (assoc :store (updater (:store reel) op op-data op-id))
             (update :records (fn [records] (conj records data-pack))))))))
+
+(defn play-records [store records updater]
+  (if (empty? records)
+    store
+    (let [[op op-data op-id] (first records), next-store (updater store op op-data op-id)]
+      (recur next-store (rest records) updater))))
+
+(defn replay-store [reel updater idx]
+  (let [records-slice (subvec (:records reel) 0 idx)]
+    (play-records (:initial-store reel) records-slice updater)))

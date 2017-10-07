@@ -13,7 +13,7 @@ Demo http://repo.respo.site/reel/target/dev.html
 Functions you need from namespaces:
 
 ```clojure
-[reel.reel :refer [reel-schema reel-updater]]
+[reel.core :refer [reel-schema reel-updater]]
 [reel.updater :refer [updater]
 [reel.comp.reel :refer [comp-reel]]
 ```

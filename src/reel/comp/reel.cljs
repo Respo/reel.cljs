@@ -7,7 +7,8 @@
             [respo-ui.style :as ui]
             [respo-ui.style.colors :as colors]
             [respo.comp.space :refer [=<]]
-            [reel.comp.records :refer [comp-records]]))
+            [reel.comp.records :refer [comp-records]]
+            [reel.core :refer [replay-store play-records]]))
 
 (defn on-run [new-store] (fn [e dispatch!] (dispatch! :reel/run new-store)))
 
@@ -21,12 +22,6 @@
    :background-color colors/paper,
    :opacity 0.8})
 
-(defn play-records [store records updater]
-  (if (empty? records)
-    store
-    (let [[op op-data op-id] (first records), next-store (updater store op op-data op-id)]
-      (recur next-store (rest records) updater))))
-
 (defn style-size [server?]
   {:width (if server? 600 (/ (.-innerWidth js/window) 1.5)),
    :height (if server? 600 (.-innerHeight js/window))})
@@ -35,10 +30,6 @@
 
 (def style-link
   (merge style-panel {:transform "scale(0.2)", :transform-origin "100% 100%"}))
-
-(defn replay-store [reel updater idx]
-  (let [records-slice (subvec (:records reel) 0 idx)]
-    (play-records (:initial-store reel) records-slice updater)))
 
 (defn on-recall [reel updater]
   (fn [idx] (fn [e dispatch!] (dispatch! :reel/recall [idx (replay-store reel updater idx)]))))
