@@ -22,10 +22,10 @@ Notice that `store` now lives as part of `reel` HashMap:
 
 ```clojure
 (def reel-schema
-  {:initial-store nil,
+  {:initial nil,
    :store nil, ; <---- store here, you have to add initial-store
    :records [],
-   :pointer 0,
+   :pointer nil,
    :stopped? false,
    :display? false})
 ```
@@ -34,10 +34,12 @@ Instead of `*store`, you need `*reel` now.
 In a todolist, the initial store is `(list)`:
 
 ```clojure
+(def store {:states {} :tasks (list)})
+
 (defonce *reel
   (atom (-> reel-schema
-            (assoc :initial-store ({:states {} :tasks (list)}))
-            (assoc :store ({:states {} :tasks (list)})))))
+            (assoc :initial store)
+            (assoc :store store))))
 ```
 
 And we need a `reel-updater` besides the familiar `updater` we used in Respo:

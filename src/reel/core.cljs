@@ -12,9 +12,8 @@
          (let [[idx a-store] op-data] {:pointer idx, :stopped? true, :store a-store})
        :reel/run {:store op-data, :stopped? false, :pointer nil}
        :reel/merge
-         {:store op-data, :initial-store op-data, :stopped? false, :pointer nil, :records []}
-       :reel/reset
-         {:store (:initial-store reel), :pointer nil, :records [], :stopped? false}
+         {:store op-data, :initial op-data, :stopped? false, :pointer nil, :records []}
+       :reel/reset {:store (:initial reel), :pointer nil, :records [], :stopped? false}
        (do (println "Unknown reel/ op:" op) nil)))
     (let [data-pack [op op-data op-id]]
       (if (:stopped? reel)

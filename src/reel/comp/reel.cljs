@@ -50,18 +50,12 @@
       {}
       (div
        {:style ui/clickable-text,
-        :on {:click (let [new-store (play-records
-                                     (:initial-store reel)
-                                     (:records reel)
-                                     updater)]
+        :on {:click (let [new-store (play-records (:initial reel) (:records reel) updater)]
                (on-run new-store))}}
        (<> "Run"))
       (div
        {:style ui/clickable-text,
-        :on {:click (let [new-store (play-records
-                                     (:initial-store reel)
-                                     (:records reel)
-                                     updater)]
+        :on {:click (let [new-store (play-records (:initial reel) (:records reel) updater)]
                (on-merge new-store))}}
        (<> "Merge"))
       (div {:style ui/clickable-text, :event {:click on-reset}} (<> "Reset"))

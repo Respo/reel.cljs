@@ -11,13 +11,15 @@
 (def ssr? (some? (.querySelector js/document "meta.respo-ssr")))
 
 (defonce *reel
-  (atom (-> schema/reel (assoc :initial-store schema/store) (assoc :store schema/store))))
+  (atom (-> schema/reel (assoc :initial schema/store) (assoc :store schema/store))))
 
 (defn dispatch! [op op-data]
   (println "Dispatch!" op op-data)
   (let [op-id (id!), new-reel (reel-updater updater @*reel op op-data op-id)]
     (comment println "Reel:" new-reel)
     (reset! *reel new-reel)))
+
+(defonce *code (atom {:updater updater, :view comp-container, :initial schema/store}))
 
 (def mount-target (.querySelector js/document ".app"))
 
@@ -32,12 +34,11 @@
 
 (defonce *previous-view (atom comp-container))
 
-(defonce *previous-updater (atom updater))
-
 (defn reload! []
-  (if (not (identical? updater @*previous-updater))
+  (if (or (not (identical? updater (:updater @*code)))
+          (not (identical? (:initial schema/store) (:initial @*code))))
     (do
-     (reset! *previous-updater updater)
+     (reset! *code (merge {:updater updater, :initial (:initial schema/store)}))
      (swap!
       *reel
       assoc
@@ -45,9 +46,11 @@
       (let [result (replay-store @*reel updater (:pointer @*reel))]
         (println "result:" result)
         result))))
-  (if (not (identical? comp-container @*previous-view))
-    (do (reset! *previous-view comp-container) (clear-cache!)))
+  (if (not (identical? comp-container (:view @*code)))
+    (do (swap! *code assoc :view comp-container) (clear-cache!)))
   (render-app! render! false)
   (println "code update."))
+
+(defonce *previous-updater (atom updater))
 
 (set! (.-onload js/window) main!)
