@@ -22,7 +22,7 @@ Functions you need from namespaces:
 
 ```clojure
 [reel.util :refer [id!]]
-[reel.core :refer [reel-updater *code handle-reload!]]
+[reel.core :refer [reel-updater *code handle-reload! listen-devtools!]]
 [reel.schema :as reel-schema]
 ```
 
@@ -63,7 +63,17 @@ Call `handle-reload!` with so many arguments to reload store and element caches:
   (render-app! render!))
 ```
 
-To use records panel, please refer to `comp-reel`. Not indent to document that yet.
+To use records panel, please refer to `comp-reel`:
+
+```clojure
+(comp-reel reel styles)
+```
+
+Listening to `Command Shift a` to launch DevTools:
+
+```clojure
+(listen-devtools! "a" dispatch!)
+```
 
 ### Develop
 

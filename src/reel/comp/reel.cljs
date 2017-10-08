@@ -28,7 +28,7 @@
 
 (defcomp
  comp-reel
- (reel updater user-styles)
+ (reel user-styles)
  (if (:display? reel)
    (div
     {:style (merge ui/flex ui/row style-reel user-styles)}

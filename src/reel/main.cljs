@@ -21,8 +21,7 @@
 
 (def mount-target (.querySelector js/document ".app"))
 
-(defn render-app! [renderer]
-  (renderer mount-target (comp-container @*reel updater) dispatch!))
+(defn render-app! [renderer] (renderer mount-target (comp-container @*reel) dispatch!))
 
 (defn main! []
   (if ssr? (render-app! realize-ssr!))
