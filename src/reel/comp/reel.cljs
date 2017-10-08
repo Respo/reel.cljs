@@ -38,9 +38,9 @@
      {}
      (div
       {}
-      (div {:style ui/clickable-text, :on {:click on-run}} (<> "Run"))
       (div {:style ui/clickable-text, :on {:click on-merge}} (<> "Merge"))
       (div {:style ui/clickable-text, :on {:click on-reset}} (<> "Reset"))
+      (div {:style ui/clickable-text, :on {:click on-run}} (<> "Run"))
       (if (not (:stopped? reel))
         (div {:style ui/clickable-text, :on {:click on-toggle}} (<> "Close"))))
      (div {:style ui/row} (<> (:store reel)))))

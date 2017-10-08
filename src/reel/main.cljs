@@ -11,7 +11,11 @@
 (def ssr? (some? (.querySelector js/document "meta.respo-ssr")))
 
 (defonce *reel
-  (atom (-> schema/reel (assoc :base schema/store) (assoc :store schema/store))))
+  (atom
+   (-> schema/reel
+       (assoc :base schema/store)
+       (assoc :store schema/store)
+       (assoc :display? true))))
 
 (defn dispatch! [op op-data]
   (println "Dispatch!" op op-data)

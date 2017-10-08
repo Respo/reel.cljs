@@ -6,10 +6,10 @@
             [respo-ui.style.colors :as colors]
             [respo.comp.space :refer [=<]]))
 
-(def style-record {:cursor :pointer, :padding "0 8px"})
+(def style-record {:cursor :pointer, :padding "0 8px", :white-space :nowrap})
 
 (def style-container
-  {:overflow :auto, :flex-shrink 0, :padding-bottom 200, :padding-top 40})
+  {:overflow :auto, :flex-shrink 0, :padding-bottom 200, :padding-top 32, :width 120})
 
 (def style-data
   {:max-width 100,

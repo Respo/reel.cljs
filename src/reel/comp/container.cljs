@@ -12,8 +12,4 @@
  comp-container
  (reel)
  (let [store (:store reel), states (:states store)]
-   (div
-    {:style (merge ui/global)}
-    (comp-todolist states (:tasks store))
-    (comp-reel reel {})
-    (<> reel))))
+   (div {:style (merge ui/global)} (comp-todolist states (:tasks store)) (comp-reel reel {}))))
