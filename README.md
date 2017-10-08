@@ -22,7 +22,7 @@ Functions you need from namespaces:
 
 ```clojure
 [reel.util :refer [id!]]
-[reel.core :refer [reel-updater *code handle-reload! listen-devtools!]]
+[reel.core :refer [reel-updater listen-devtools! refresh-reel]]
 [reel.schema :as reel-schema]
 ```
 
@@ -52,15 +52,14 @@ Make sure you watch `*reel` and initialize `reel.core/*code` inside `main!` func
 
 ```clojure
 (add-watch *reel :changes (fn [] (render-app! render!)))
-(reset! *code {:updater updater, :view comp-container, :base store})
 ```
 
 Call `handle-reload!` with so many arguments to reload store and element caches:
 
 ```clojure
 (defn reload! []
-  (handle-reload! store updater comp-container *reel clear-cache!)
-  (render-app! render!))
+  (clear-cache!)
+  (reset! *reel (refresh-reel @*reel schema/store updater)))
 ```
 
 To use records panel, please refer to `comp-reel`:

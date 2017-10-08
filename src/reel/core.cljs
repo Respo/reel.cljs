@@ -33,25 +33,6 @@
             (assoc :store (updater (:store reel) op op-data op-id))
             (update :records (fn [records] (conj records data-pack))))))))
 
-(defonce *code (atom nil))
-
-(defn handle-reload! [store0 updater comp-container *reel clear-cache!]
-  (if (or (not (identical? updater (:updater @*code)))
-          (not (identical? store0 (:base @*code))))
-    (do
-     (swap! *code merge {:updater updater, :base store0})
-     (swap!
-      *reel
-      assoc
-      :store
-      (let [reel @*reel]
-        (play-records
-         (:base reel)
-         (if (:stopped? reel) (subvec (:records reel) 0 (:pointer reel)) (:records reel))
-         updater)))))
-  (if (not (identical? comp-container (:view @*code)))
-    (do (swap! *code assoc :view comp-container) (clear-cache!))))
-
 (defn listen-devtools! [keyboard dispatch!]
   (.addEventListener
    js/window
@@ -61,3 +42,13 @@
               (.-metaKey event)
               (= (.charCodeAt (string/upper-case keyboard)) (.-keyCode event)))
        (dispatch! :reel/toggle nil)))))
+
+(defn refresh-reel [reel base updater]
+  (-> reel
+      (assoc :base base)
+      (assoc
+       :store
+       (play-records
+        base
+        (if (:stopped? reel) (subvec (:records reel) 0 (:pointer reel)) (:records reel))
+        updater))))

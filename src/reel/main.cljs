@@ -4,7 +4,7 @@
             [reel.comp.container :refer [comp-container]]
             [cljs.reader :refer [read-string]]
             [reel.util :refer [id!]]
-            [reel.core :refer [reel-updater *code handle-reload! listen-devtools!]]
+            [reel.core :refer [reel-updater listen-devtools! refresh-reel]]
             [reel.schema :as schema]
             [reel.updater :refer [updater]]))
 
@@ -27,13 +27,12 @@
   (if ssr? (render-app! realize-ssr!))
   (render-app! render!)
   (add-watch *reel :changes (fn [] (render-app! render!)))
-  (reset! *code {:updater updater, :view comp-container, :base schema/store})
   (listen-devtools! "a" dispatch!)
   (println "App started!"))
 
 (defn reload! []
-  (handle-reload! schema/store updater comp-container *reel clear-cache!)
-  (render-app! render!)
+  (clear-cache!)
+  (reset! *reel (refresh-reel @*reel schema/store updater))
   (println "code update."))
 
 (set! (.-onload js/window) main!)

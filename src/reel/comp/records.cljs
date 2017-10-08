@@ -37,6 +37,6 @@
                      (if (= pointer idx)
                        {:background-color colors/attractive, :color :white})),
              :on {:click (on-recall idx)}}
-            (<> (first record))
+            (<> (pr-str (first record)))
             (=< 8 nil)
             (<> span (get record 1) style-data))])))))

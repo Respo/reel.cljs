@@ -9,7 +9,7 @@
             [respo.comp.space :refer [=<]]
             [reel.comp.records :refer [comp-records]]))
 
-(defn on-run [new-store] (fn [e dispatch!] (dispatch! :reel/run new-store)))
+(defn on-run [e dispatch!] (dispatch! :reel/run nil))
 
 (defn on-merge [e dispatch! m!] (dispatch! :reel/merge nil))
 
