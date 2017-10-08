@@ -4,9 +4,7 @@
             [reel.comp.container :refer [comp-container]]
             [cljs.reader :refer [read-string]]
             [reel.util :refer [id!]]
-            [reel.core
-             :refer
-             [reel-updater replay-store *code handle-reload! listen-devtools!]]
+            [reel.core :refer [reel-updater *code handle-reload! listen-devtools!]]
             [reel.schema :as schema]
             [reel.updater :refer [updater]]))
 

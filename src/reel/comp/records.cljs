@@ -19,9 +19,11 @@
    :display :inline-block,
    :vertical-align :middle})
 
+(defn on-recall [idx] (fn [e dispatch!] (dispatch! :reel/recall idx)))
+
 (defcomp
  comp-records
- (records pointer on-recall)
+ (records pointer)
  (div
   {:style style-container}
   (->> records
@@ -34,7 +36,7 @@
                      style-record
                      (if (= pointer idx)
                        {:background-color colors/attractive, :color :white})),
-             :event {:click (on-recall idx)}}
+             :on {:click (on-recall idx)}}
             (<> (first record))
             (=< 8 nil)
             (<> span (get record 1) style-data))])))))
