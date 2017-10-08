@@ -12,8 +12,8 @@
          (let [[idx a-store] op-data] {:pointer idx, :stopped? true, :store a-store})
        :reel/run {:store op-data, :stopped? false, :pointer nil}
        :reel/merge
-         {:store op-data, :initial op-data, :stopped? false, :pointer nil, :records []}
-       :reel/reset {:store (:initial reel), :pointer nil, :records [], :stopped? false}
+         {:store op-data, :base op-data, :stopped? false, :pointer nil, :records []}
+       :reel/reset {:store (:base reel), :pointer nil, :records [], :stopped? false}
        (do (println "Unknown reel/ op:" op) nil)))
     (let [data-pack [op op-data op-id]]
       (if (:stopped? reel)
@@ -29,16 +29,32 @@
       (recur next-store (rest records) updater))))
 
 (defn replay-store [reel updater idx]
-  (let [records-slice (if (:stopped? reel) (subvec (:records reel) 0 idx) (:records reel))]
-    (play-records (:initial-store reel) records-slice updater)))
+  (if (zero? idx)
+    (:base reel)
+    (let [records-slice (if (:stopped? reel) (subvec (:records reel) 0 idx) (:records reel))]
+      (play-records (:base-store reel) records-slice updater))))
 
 (defonce *code (atom nil))
 
 (defn handle-reload! [store0 updater comp-container *reel clear-cache!]
   (if (or (not (identical? updater (:updater @*code)))
-          (not (identical? store0 (:initial @*code))))
+          (not (identical? store0 (:base @*code))))
     (do
-     (swap! *code merge {:updater updater, :initial store0})
+     (swap! *code merge {:updater updater, :base store0})
      (swap! *reel assoc :store (replay-store @*reel updater (:pointer @*reel)))))
   (if (not (identical? comp-container (:view @*code)))
     (do (swap! *code assoc :view comp-container) (clear-cache!))))
+
+(defn listen-devtools! [keyboard dispatch!]
+  (.addEventListener
+   js/window
+   "keydown"
+   (fn [event]
+     (println
+      (string/upper-case keyboard)
+      (.-keyCodeAt (string/upper-case keyboard))
+      (.-keyCode event))
+     (if (and (.-shiftKey event)
+              (.-metaKey event)
+              (= (.charCodeAt (string/upper-case keyboard)) (.-keyCode event)))
+       (dispatch! :reel/toggle nil)))))

@@ -25,7 +25,7 @@
  (div
   {:style style-container}
   (->> records
-       (cons [:initial nil :initial])
+       (cons [:base nil :base])
        (map-indexed
         (fn [idx record]
           [(last record)

@@ -10,10 +10,10 @@
 
 (defcomp
  comp-container
- (reel updater server?)
+ (reel updater)
  (let [store (:store reel), states (:states store)]
    (div
     {:style (merge ui/global)}
     (comp-todolist states (:tasks store))
-    (comp-reel reel updater server?)
+    (comp-reel reel updater {})
     (<> reel))))
