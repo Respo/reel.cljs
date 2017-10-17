@@ -5,35 +5,34 @@
             [reel.comp.container :refer [comp-container]]
             [reel.schema :as schema]))
 
-(def base-info
-  {:title "Reel", :icon "http://repo-cdn.b0.upaiyun.com/logo/respo.png", :ssr nil})
+(def base-info {:title "Reel", :icon "http://cdn.tiye.me/logo/respo.png", :ssr nil})
 
 (defn dev-page []
   (make-page
    ""
    (merge
     base-info
-    {:styles ["http://192.168.99.228:8100/main.css"],
+    {:styles ["http://localhost:8100/main.css"],
      :scripts ["/main.js" "/browser/lib.js" "/browser/main.js"]})))
 
 (def preview? (= "preview" js/process.env.prod))
 
 (defn prod-page []
   (let [html-content (make-string (comp-container schema/reel identity true))
-        manifest (.parse js/JSON (slurp "dist/assets-manifest.json"))
-        cljs-manifest (.parse js/JSON (slurp "dist/manifest.json"))
-        cdn (if preview? "" "http://repo-cdn.b0.upaiyun.com/reel/")
+        webpack-info (.parse js/JSON (slurp "dist/webpack-manifest.json"))
+        cljs-info (.parse js/JSON (slurp "dist/cljs-manifest.json"))
+        cdn (if preview? "" "http://cdn.tiye.me/reel/")
         prefix-cdn (fn [x] (str cdn x))]
     (make-page
      html-content
      (merge
       base-info
-      {:styles [(prefix-cdn (aget manifest "main.css"))],
+      {:styles ["http://cdn.tiye.me/favored-fonts/main.css"
+                (prefix-cdn (aget webpack-info "main.css"))],
        :scripts (map
                  prefix-cdn
-                 [(aget manifest "main.js")
-                  (-> cljs-manifest (aget 0) (aget "js-name"))
-                  (-> cljs-manifest (aget 1) (aget "js-name"))]),
+                 [(-> cljs-info (aget 0) (aget "js-name"))
+                  (-> cljs-info (aget 1) (aget "js-name"))]),
        :ssr "respo-ssr"}))))
 
 (defn main! []
