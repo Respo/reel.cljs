@@ -6,7 +6,7 @@
             [respo-ui.style :as ui]
             [reel.comp.task :refer [comp-task]]))
 
-(def style-container {:padding 8})
+(def style-container {:padding 8, :overflow :auto})
 
 (defn on-click [state] (fn [e dispatch! mutate!] (dispatch! :task/add state) (mutate! "")))
 
@@ -17,7 +17,7 @@
  (states tasks)
  (let [state (or (:data states) "")]
    (div
-    {:style style-container}
+    {:style (merge ui/fullscreen style-container)}
     (div
      {}
      (input

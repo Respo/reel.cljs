@@ -9,7 +9,8 @@
             [respo.comp.space :refer [=<]]
             [reel.comp.records :refer [comp-records]]
             [respo-value.comp.value :refer [comp-value]]
-            [reel.style :as style]))
+            [reel.style :as style]
+            [fipp.edn :refer [pprint]]))
 
 (defn on-run [e dispatch!] (dispatch! :reel/run nil))
 
@@ -38,7 +39,7 @@
     (comp-records (:records reel) (:pointer reel))
     (=< 8 nil)
     (div
-     {}
+     {:style (merge ui/flex ui/column)}
      (div
       {}
       (div {:style ui/clickable-text, :on {:click on-merge}} (<> "Merge"))
@@ -47,8 +48,12 @@
       (if (not (:stopped? reel))
         (div {:style ui/clickable-text, :on {:click on-toggle}} (<> "Close"))))
      (div
-      {:style ui/column}
+      {:style (merge ui/column ui/flex {:overflow :auto})}
       (let [records (:records reel), pointer (:pointer reel)]
-        (div {:style (merge style/code {:font-size 12})} (<> (get records (dec pointer)))))
-      (div {:style (merge style/code {:font-size 12})} (<> (:store reel))))))
+        (div
+         {:style (merge style/code {:font-size 12})}
+         (<> (pr-str (get (get records (dec pointer)) 1)))))
+      (div
+       {:style (merge style/code {:font-size 12, :white-space :pre})}
+       (<> (with-out-str (pprint (:store reel))))))))
    (span {})))
