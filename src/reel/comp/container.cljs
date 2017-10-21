@@ -1,6 +1,6 @@
 
 (ns reel.comp.container
-  (:require-macros [respo.macros :refer [defcomp <> div span]])
+  (:require-macros [respo.macros :refer [defcomp cursor-> <> div span]])
   (:require [hsl.core :refer [hsl]]
             [respo-ui.style :as ui]
             [respo.core :refer [create-comp]]
@@ -12,4 +12,7 @@
  comp-container
  (reel)
  (let [store (:store reel), states (:states store)]
-   (div {:style (merge ui/global)} (comp-todolist states (:tasks store)) (comp-reel reel {}))))
+   (div
+    {:style (merge ui/global)}
+    (comp-todolist states (:tasks store))
+    (cursor-> :reel comp-reel states reel {}))))

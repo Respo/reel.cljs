@@ -18,7 +18,8 @@
 (def preview? (= "preview" js/process.env.prod))
 
 (defn prod-page []
-  (let [html-content (make-string (comp-container schema/reel identity true))
+  (let [reel (-> schema/reel (assoc :base schema/store) (assoc :store schema/store))
+        html-content (make-string (comp-container reel identity true))
         webpack-info (.parse js/JSON (slurp "dist/webpack-manifest.json"))
         cljs-info (.parse js/JSON (slurp "dist/cljs-manifest.json"))
         cdn (if preview? "" "http://cdn.tiye.me/reel/")
