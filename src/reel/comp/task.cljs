@@ -10,7 +10,11 @@
 (defn on-input [task-id] (fn [e dispatch!] (dispatch! :task/edit [task-id (:value e)])))
 
 (def style-done
-  {:width 32, :height 32, :display :inline-block, :background-color colors/attractive})
+  {:width 32,
+   :height 32,
+   :display :inline-block,
+   :background-color colors/attractive,
+   :cursor :pointer})
 
 (defn on-toggle [task-id] (fn [e dispatch!] (dispatch! :task/toggle task-id)))
 

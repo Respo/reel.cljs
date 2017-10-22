@@ -4,7 +4,8 @@
   (:require [respo.core :refer [create-comp]]
             [respo.comp.space :refer [=<]]
             [respo-ui.style :as ui]
-            [reel.comp.task :refer [comp-task]]))
+            [reel.comp.task :refer [comp-task]]
+            [keycode.core :as keycode]))
 
 (def style-container {:padding 8, :overflow :auto})
 
@@ -21,7 +22,12 @@
     (div
      {}
      (input
-      {:placeholder "Task to add...", :value state, :style ui/input, :on {:input on-input}})
+      {:placeholder "Task to add...",
+       :value state,
+       :style ui/input,
+       :on {:input on-input,
+            :keydown (fn [e d! m!]
+              (if (= (:keycode e) keycode/return) (do (d! :task/add state) (m! ""))))}})
      (=< 8 nil)
      (button {:style ui/button, :on {:click (on-click state)}} (<> "Add")))
     (div {} (->> tasks (map (fn [task] [(:id task) (comp-task task)])))))))
