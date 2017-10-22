@@ -15,4 +15,4 @@
    (div
     {:style (merge ui/global)}
     (comp-todolist states (:tasks store))
-    (cursor-> :reel comp-reel states reel {}))))
+    (cursor-> :reel comp-reel states reel nil))))

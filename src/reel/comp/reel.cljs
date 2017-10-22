@@ -17,18 +17,22 @@
 (defn on-merge [e dispatch! m!] (dispatch! :reel/merge nil))
 
 (def style-reel
-  {:width "50%",
-   :height "50%",
+  {:width "60%",
+   :height "60%",
    :right 0,
    :bottom 0,
    :position :fixed,
-   :background-color (hsl 0 0 100 0.9),
+   :background-color (hsl 0 0 100 0.7),
    :border (str "1px solid " (hsl 0 0 90)),
-   :font-size 14})
+   :font-size 14,
+   :backdrop-filter "blur(2px)"})
 
 (defn on-toggle [e dispatch!] (dispatch! :reel/toggle nil))
 
 (defn on-reset [e dispatch!] (dispatch! :reel/reset nil))
+
+(defn render-button [guide on-click]
+  (div {:style ui/clickable-text, :on {:click on-click}} (<> guide)))
 
 (defcomp
  comp-reel
@@ -42,17 +46,18 @@
      {:style (merge ui/flex ui/column)}
      (div
       {}
-      (div {:style ui/clickable-text, :on {:click on-merge}} (<> "Merge"))
-      (div {:style ui/clickable-text, :on {:click on-reset}} (<> "Reset"))
-      (div {:style ui/clickable-text, :on {:click on-run}} (<> "Run"))
-      (if (not (:stopped? reel))
-        (div {:style ui/clickable-text, :on {:click on-toggle}} (<> "Close"))))
+      (render-button "Merge" on-merge)
+      (render-button "Reset" on-reset)
+      (render-button "Run" on-run)
+      (if (not (:stopped? reel)) (render-button "Close" on-toggle)))
      (div
       {:style (merge ui/column ui/flex {:overflow :auto})}
       (let [records (:records reel), pointer (:pointer reel)]
         (div
          {:style (merge style/code {:font-size 12})}
-         (<> (pr-str (get (get records (dec pointer)) 1)))))
+         (<>
+          (with-out-str
+           (pprint (if (:stopped? reel) (get records (dec pointer)) (last records)))))))
       (div
        {:style (merge style/code {:font-size 12, :white-space :pre})}
        (<> (with-out-str (pprint (:store reel))))))))
