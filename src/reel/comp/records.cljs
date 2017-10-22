@@ -7,14 +7,19 @@
             [respo.comp.space :refer [=<]]
             [reel.style :as style]))
 
-(def style-record {:cursor :pointer, :padding "0 8px", :white-space :nowrap})
+(def style-record
+  {:cursor :pointer,
+   :padding "0 8px",
+   :white-space :nowrap,
+   :overflow :hidden,
+   :text-overflow :ellipsis})
 
 (def style-container
   {:overflow :auto,
    :flex-shrink 0,
-   :padding-bottom 200,
-   :padding-top 32,
-   :width 120,
+   :padding-bottom 120,
+   :padding-top 16,
+   :width 160,
    :font-size 12})
 
 (def style-data

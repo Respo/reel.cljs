@@ -47,18 +47,18 @@
  (states reel user-styles)
  (if (:display? reel)
    (div
-    {:style (merge ui/flex ui/row style-reel user-styles)}
-    (comp-records (:records reel) (:pointer reel))
-    (=< 8 nil)
+    {:style (merge ui/flex ui/column style-reel user-styles)}
     (div
-     {:style (merge ui/flex ui/column)}
-     (div
-      {}
-      (render-button "Merge" on-merge true)
-      (render-button "Reset" on-reset true)
-      (render-button "Step" on-step (:stopped? reel))
-      (render-button "Run" on-run (:stopped? reel))
-      (render-button "Close" on-toggle (not (:stopped? reel))))
+     {}
+     (render-button "Merge" on-merge true)
+     (render-button "Reset" on-reset true)
+     (render-button "Step" on-step (:stopped? reel))
+     (render-button "Run" on-run (:stopped? reel))
+     (render-button "Close" on-toggle (not (:stopped? reel))))
+    (div
+     {:style ui/row}
+     (comp-records (:records reel) (:pointer reel))
+     (=< 8 nil)
      (div
       {:style (merge ui/column ui/flex {:overflow :auto})}
       (let [records (:records reel), pointer (:pointer reel)]
@@ -68,6 +68,11 @@
           (with-out-str
            (pprint (if (:stopped? reel) (get records (dec pointer)) (last records)))))))
       (div
-       {:style (merge style/code {:font-size 12, :white-space :pre})}
+       {:style (merge
+                style/code
+                {:font-size 12,
+                 :white-space :pre,
+                 :padding "8px 0 32px 0",
+                 :line-height "20px"})}
        (<> (with-out-str (pprint (:store reel))))))))
    (span {})))
