@@ -15,6 +15,7 @@
      (let [pointer (:pointer reel)
            records (:records reel)
            base (:base reel)
+           store (:store reel)
            stopped? (:stopped? reel)]
        (case op
          :reel/toggle {:display? (not (:display? reel))}
@@ -26,8 +27,22 @@
                             updater)]
              {:pointer idx, :stopped? true, :store new-store})
          :reel/run
-           (let [new-store (play-records (:base reel) (:records reel) updater)]
+           (let [new-store (play-records base records updater)]
              {:store new-store, :stopped? false, :pointer nil})
+         :reel/step
+           (if stopped?
+             (if (< (count records) 2)
+               nil
+               (if (< pointer (count records))
+                 (let [next-pointer (inc pointer), next-record (nth records pointer)]
+                   {:pointer next-pointer,
+                    :store (updater
+                            (:store reel)
+                            (nth next-record 0)
+                            (nth next-record 1)
+                            (nth next-record 2))})
+                 {:store base, :pointer 0}))
+             nil)
          :reel/merge
            (if stopped?
              (if (zero? pointer)

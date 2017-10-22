@@ -31,8 +31,13 @@
 
 (defn on-reset [e dispatch!] (dispatch! :reel/reset nil))
 
-(defn render-button [guide on-click]
-  (div {:style ui/clickable-text, :on {:click on-click}} (<> guide)))
+(defn render-button [guide on-click enabled?]
+  (div
+   {:style (merge ui/clickable-text (if (not enabled?) {:color (hsl 0 0 90)})),
+    :on {:click (if enabled? on-click identity)}}
+   (<> guide)))
+
+(defn on-step [e d! m!] (d! :reel/step nil))
 
 (defcomp
  comp-reel
@@ -46,10 +51,11 @@
      {:style (merge ui/flex ui/column)}
      (div
       {}
-      (render-button "Merge" on-merge)
-      (render-button "Reset" on-reset)
-      (render-button "Run" on-run)
-      (if (not (:stopped? reel)) (render-button "Close" on-toggle)))
+      (render-button "Merge" on-merge true)
+      (render-button "Reset" on-reset true)
+      (render-button "Step" on-step (:stopped? reel))
+      (render-button "Run" on-run (:stopped? reel))
+      (render-button "Close" on-toggle (not (:stopped? reel))))
      (div
       {:style (merge ui/column ui/flex {:overflow :auto})}
       (let [records (:records reel), pointer (:pointer reel)]
