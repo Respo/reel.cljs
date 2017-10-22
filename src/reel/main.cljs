@@ -15,7 +15,7 @@
    (-> schema/reel
        (assoc :base schema/store)
        (assoc :store schema/store)
-       (assoc :display? true))))
+       (assoc :display? false))))
 
 (defn dispatch! [op op-data]
   (println "Dispatch!" op op-data)
