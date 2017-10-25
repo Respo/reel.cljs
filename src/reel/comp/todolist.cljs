@@ -1,7 +1,6 @@
 
 (ns reel.comp.todolist
-  (:require-macros [respo.macros :refer [defcomp <> div span button input]])
-  (:require [respo.core :refer [create-comp]]
+  (:require [respo.macros :refer [defcomp <> div span button input]]
             [respo.comp.space :refer [=<]]
             [respo-ui.style :as ui]
             [reel.comp.task :refer [comp-task]]

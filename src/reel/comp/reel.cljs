@@ -1,7 +1,6 @@
 
 (ns reel.comp.reel
-  (:require-macros [respo.macros :refer [defcomp cursor-> <> div button span]])
-  (:require [respo.core :refer [create-comp]]
+  (:require [respo.macros :refer [defcomp cursor-> <> div button span]]
             [hsl.core :refer [hsl]]
             [respo.comp.inspect :refer [comp-inspect]]
             [respo-ui.style :as ui]
