@@ -13,7 +13,7 @@ Demo http://repo.respo.site/reel/
 [![Clojars Project](https://img.shields.io/clojars/v/respo/reel.svg)](https://clojars.org/respo/reel)
 
 ```edn
-[respo/reel "0.2.0-a8"]
+[respo/reel "0.2.1"]
 ```
 
 Browse [src/reel/main.cljs](https://github.com/Respo/reel/blob/master/src/reel/main.cljs) to see how to use it.

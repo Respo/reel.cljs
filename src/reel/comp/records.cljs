@@ -1,6 +1,6 @@
 
 (ns reel.comp.records
-  (:require [respo.macros :refer [defcomp <> div span style]]
+  (:require [respo.macros :refer [defcomp <> div span style list->]]
             [respo-ui.style :as ui]
             [respo-ui.style.colors :as colors]
             [respo.comp.space :refer [=<]]
@@ -37,7 +37,8 @@
  (div
   {:style (merge style/code style-container)}
   (style {:innerHTML ".record-item:hover{\n  background-color: #eee;\n}"})
-  (div
+  (list->
+   :div
    {}
    (->> records
         (cons [:base nil :base])

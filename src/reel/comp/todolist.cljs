@@ -1,6 +1,6 @@
 
 (ns reel.comp.todolist
-  (:require [respo.macros :refer [defcomp <> div span button input]]
+  (:require [respo.macros :refer [defcomp <> div span button input list->]]
             [respo.comp.space :refer [=<]]
             [respo-ui.style :as ui]
             [reel.comp.task :refer [comp-task]]
@@ -29,4 +29,4 @@
               (if (= (:keycode e) keycode/return) (do (d! :task/add state) (m! ""))))}})
      (=< 8 nil)
      (button {:style ui/button, :on {:click (on-click state)}} (<> "Add")))
-    (div {} (->> tasks (map (fn [task] [(:id task) (comp-task task)])))))))
+    (list-> :div {} (->> tasks (map (fn [task] [(:id task) (comp-task task)])))))))
