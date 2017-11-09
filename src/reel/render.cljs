@@ -23,7 +23,7 @@
 
 (defn prod-page []
   (let [reel (-> schema/reel (assoc :base schema/store) (assoc :store schema/store))
-        html-content (make-string (comp-container reel identity true))
+        html-content (make-string (comp-container reel))
         cljs-info (.parse js/JSON (slurp "dist/cljs-manifest.json"))
         cdn (if preview? "" "http://cdn.tiye.me/reel/")
         prefix-cdn (fn [x] (str cdn x))]
