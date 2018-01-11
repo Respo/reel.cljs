@@ -11,9 +11,24 @@
             [reel.style :as style]
             [fipp.edn :refer [pprint]]))
 
+(defn on-merge [e dispatch! m!] (dispatch! :reel/merge nil))
+
+(defn on-reset [e dispatch!] (dispatch! :reel/reset nil))
+
 (defn on-run [e dispatch!] (dispatch! :reel/run nil))
 
-(defn on-merge [e dispatch! m!] (dispatch! :reel/merge nil))
+(defn on-step [e d! m!] (d! :reel/step nil))
+
+(defn on-toggle [e dispatch!] (dispatch! :reel/toggle nil))
+
+(defn render-button [guide on-click enabled?]
+  (div
+   {:style (merge
+            ui/clickable-text
+            {:user-select :none}
+            (if (not enabled?) {:color (hsl 0 0 90)})),
+    :on-click (if enabled? on-click identity)}
+   (<> guide)))
 
 (def style-reel
   {:width "60%",
@@ -25,21 +40,6 @@
    :border (str "1px solid " (hsl 0 0 90)),
    :font-size 14,
    :backdrop-filter "blur(2px)"})
-
-(defn on-toggle [e dispatch!] (dispatch! :reel/toggle nil))
-
-(defn on-reset [e dispatch!] (dispatch! :reel/reset nil))
-
-(defn render-button [guide on-click enabled?]
-  (div
-   {:style (merge
-            ui/clickable-text
-            {:user-select :none}
-            (if (not enabled?) {:color (hsl 0 0 90)})),
-    :on {:click (if enabled? on-click identity)}}
-   (<> guide)))
-
-(defn on-step [e d! m!] (d! :reel/step nil))
 
 (defcomp
  comp-reel

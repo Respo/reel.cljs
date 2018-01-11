@@ -1,6 +1,16 @@
 
 (ns reel.core (:require [clojure.string :as string]))
 
+(defn listen-devtools! [keyboard dispatch!]
+  (.addEventListener
+   js/window
+   "keydown"
+   (fn [event]
+     (if (and (.-shiftKey event)
+              (.-metaKey event)
+              (= (.charCodeAt (string/upper-case keyboard)) (.-keyCode event)))
+       (dispatch! :reel/toggle nil)))))
+
 (defn play-records [store records updater]
   (if (empty? records)
     store
@@ -65,16 +75,6 @@
         (-> reel
             (assoc :store (updater (:store reel) op op-data op-id))
             (update :records (fn [records] (conj records data-pack))))))))
-
-(defn listen-devtools! [keyboard dispatch!]
-  (.addEventListener
-   js/window
-   "keydown"
-   (fn [event]
-     (if (and (.-shiftKey event)
-              (.-metaKey event)
-              (= (.charCodeAt (string/upper-case keyboard)) (.-keyCode event)))
-       (dispatch! :reel/toggle nil)))))
 
 (defn refresh-reel [reel base updater]
   (let [next-base (if (:merged? reel) (:base reel) base)]

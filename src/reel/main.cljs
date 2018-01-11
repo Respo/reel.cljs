@@ -8,8 +8,6 @@
             [reel.schema :as schema]
             [reel.updater :refer [updater]]))
 
-(def ssr? (some? (.querySelector js/document "meta.respo-ssr")))
-
 (defonce *reel
   (atom
    (-> schema/reel
@@ -26,6 +24,8 @@
 (def mount-target (.querySelector js/document ".app"))
 
 (defn render-app! [renderer] (renderer mount-target (comp-container @*reel) dispatch!))
+
+(def ssr? (some? (.querySelector js/document "meta.respo-ssr")))
 
 (defn main! []
   (if ssr? (render-app! realize-ssr!))

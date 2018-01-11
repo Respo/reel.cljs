@@ -6,12 +6,7 @@
             [respo.comp.space :refer [=<]]
             [reel.style :as style]))
 
-(def style-record
-  {:cursor :pointer,
-   :padding "0 8px",
-   :white-space :nowrap,
-   :overflow :hidden,
-   :text-overflow :ellipsis})
+(defn on-recall [idx] (fn [e dispatch!] (dispatch! :reel/recall idx)))
 
 (def style-container
   {:overflow :auto,
@@ -21,15 +16,12 @@
    :width 160,
    :font-size 12})
 
-(def style-data
-  {:max-width 100,
-   :overflow :hidden,
-   :text-overflow :ellipsis,
+(def style-record
+  {:cursor :pointer,
+   :padding "0 8px",
    :white-space :nowrap,
-   :display :inline-block,
-   :vertical-align :middle})
-
-(defn on-recall [idx] (fn [e dispatch!] (dispatch! :reel/recall idx)))
+   :overflow :hidden,
+   :text-overflow :ellipsis})
 
 (defcomp
  comp-records
@@ -51,5 +43,13 @@
                       style-record
                       (if (= pointer idx)
                         {:background-color colors/attractive, :color :white})),
-              :on {:click (on-recall idx)}}
+              :on-click (on-recall idx)}
              (<> (pr-str (first record))))]))))))
+
+(def style-data
+  {:max-width 100,
+   :overflow :hidden,
+   :text-overflow :ellipsis,
+   :white-space :nowrap,
+   :display :inline-block,
+   :vertical-align :middle})

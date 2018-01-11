@@ -6,11 +6,11 @@
             [reel.comp.task :refer [comp-task]]
             [keycode.core :as keycode]))
 
-(def style-container {:padding 8, :overflow :auto})
-
 (defn on-click [state] (fn [e dispatch! mutate!] (dispatch! :task/add state) (mutate! "")))
 
 (defn on-input [e dispatch! mutate!] (mutate! (:value e)))
+
+(def style-container {:padding 8, :overflow :auto})
 
 (defcomp
  comp-todolist
@@ -24,9 +24,9 @@
       {:placeholder "Task to add...",
        :value state,
        :style ui/input,
-       :on {:input on-input,
-            :keydown (fn [e d! m!]
-              (if (= (:keycode e) keycode/return) (do (d! :task/add state) (m! ""))))}})
+       :on-input on-input,
+       :on-keydown (fn [e d! m!]
+         (if (= (:keycode e) keycode/return) (do (d! :task/add state) (m! ""))))})
      (=< 8 nil)
-     (button {:style ui/button, :on {:click (on-click state)}} (<> "Add")))
-    (list-> :div {} (->> tasks (map (fn [task] [(:id task) (comp-task task)])))))))
+     (button {:style ui/button, :on-click (on-click state)} (<> "Add")))
+    (list-> {} (->> tasks (map (fn [task] [(:id task) (comp-task task)])))))))

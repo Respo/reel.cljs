@@ -3,7 +3,8 @@
   (:require [respo.render.html :refer [make-string]]
             [shell-page.core :refer [make-page spit slurp]]
             [reel.comp.container :refer [comp-container]]
-            [reel.schema :as schema]))
+            [reel.schema :as schema]
+            [cljs.reader :refer [read-string]]))
 
 (def base-info
   {:title "Reel",
@@ -16,15 +17,14 @@
    ""
    (merge
     base-info
-    {:styles ["http://localhost:8100/main.css"],
-     :scripts ["/browser/lib.js" "/browser/main.js"]})))
+    {:styles ["http://localhost:8100/main.css"], :scripts ["/lib.js" "/main.js"]})))
 
 (def preview? (= "preview" js/process.env.prod))
 
 (defn prod-page []
   (let [reel (-> schema/reel (assoc :base schema/store) (assoc :store schema/store))
         html-content (make-string (comp-container reel))
-        cljs-info (.parse js/JSON (slurp "dist/cljs-manifest.json"))
+        assets (read-string (slurp "dist/assets.edn"))
         cdn (if preview? "" "http://cdn.tiye.me/reel/")
         prefix-cdn (fn [x] (str cdn x))]
     (make-page
@@ -32,10 +32,7 @@
      (merge
       base-info
       {:styles ["http://cdn.tiye.me/favored-fonts/main.css"],
-       :scripts (map
-                 prefix-cdn
-                 [(-> cljs-info (aget 0) (aget "js-name"))
-                  (-> cljs-info (aget 1) (aget "js-name"))]),
+       :scripts (map #(-> % :output-name prefix-cdn) assets),
        :ssr "respo-ssr"}))))
 
 (defn main! []
