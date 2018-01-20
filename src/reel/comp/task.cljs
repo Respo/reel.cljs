@@ -3,8 +3,8 @@
   (:require [respo.macros :refer [defcomp <> div button input]]
             [hsl.core :refer [hsl]]
             [respo.comp.space :refer [=<]]
-            [respo-ui.style :as ui]
-            [respo-ui.style.colors :as colors]))
+            [respo-ui.core :as ui]
+            [respo-ui.colors :as colors]))
 
 (defn on-input [task-id] (fn [e dispatch!] (dispatch! :task/edit [task-id (:value e)])))
 

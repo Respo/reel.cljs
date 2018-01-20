@@ -1,8 +1,8 @@
 
 (ns reel.comp.records
   (:require [respo.macros :refer [defcomp <> div span style list->]]
-            [respo-ui.style :as ui]
-            [respo-ui.style.colors :as colors]
+            [respo-ui.core :as ui]
+            [respo-ui.colors :as colors]
             [respo.comp.space :refer [=<]]
             [reel.style :as style]))
 

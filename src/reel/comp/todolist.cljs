@@ -2,7 +2,7 @@
 (ns reel.comp.todolist
   (:require [respo.macros :refer [defcomp <> div span button input list->]]
             [respo.comp.space :refer [=<]]
-            [respo-ui.style :as ui]
+            [respo-ui.core :as ui]
             [reel.comp.task :refer [comp-task]]
             [keycode.core :as keycode]))
 
