@@ -21,11 +21,7 @@
          (case op
            :reel/toggle {:display? (not (:display? reel))}
            :reel/recall
-             (let [idx op-data
-                   new-store (play-records
-                              (:base reel)
-                              (subvec (:records reel) 0 idx)
-                              updater)]
+             (let [idx op-data, new-store (play-records base (subvec records 0 idx) updater)]
                {:pointer idx, :stopped? true, :store new-store})
            :reel/run
              (let [new-store (play-records base records updater)]
@@ -35,14 +31,11 @@
                (if (< (count records) 2)
                  nil
                  (if (< pointer (count records))
-                   (let [next-pointer (inc pointer), next-record (nth records pointer)]
+                   (let [next-pointer (inc pointer)
+                         next-record (nth records pointer)
+                         [old-op old-data old-id old-time] next-record]
                      {:pointer next-pointer,
-                      :store (updater
-                              (:store reel)
-                              (nth next-record 0)
-                              (nth next-record 1)
-                              (nth next-record 2)
-                              (nth next-record 3))})
+                      :store (updater (:store reel) old-op old-data old-id old-time)})
                    {:store base, :pointer 0}))
                nil)
            :reel/merge
@@ -60,6 +53,17 @@
              (if stopped?
                {:records (subvec records 0 pointer)}
                {:store (:base reel), :pointer nil, :records [], :stopped? false})
+           :reel/remove
+             (let [idx op-data]
+               (if (zero? idx)
+                 reel
+                 (-> reel
+                     (update :pointer dec)
+                     (update
+                      :records
+                      (fn [records]
+                        (vec (concat (subvec records 0 (dec idx)) (subvec records idx)))))
+                     (assoc :store (play-records base (subvec records 0 (dec idx)) updater)))))
            (do (.warn js/console "Unknown reel/ op:" op) nil))))
       (let [data-pack [op op-data op-id op-time]]
         (if (:stopped? reel)

@@ -1,6 +1,6 @@
 
 (ns reel.comp.reel
-  (:require [respo.macros :refer [defcomp cursor-> <> div button span]]
+  (:require [respo.macros :refer [defcomp cursor-> action-> <> div button span]]
             [hsl.core :refer [hsl]]
             [respo.comp.inspect :refer [comp-inspect]]
             [respo-ui.core :as ui]
@@ -57,21 +57,28 @@
     (div
      {:style ui/row}
      (comp-records (:records reel) (:pointer reel))
-     (=< 8 nil)
      (div
-      {:style (merge ui/column ui/flex {:overflow :auto})}
+      {:style (merge ui/column ui/flex {:overflow :auto, :padding "0 8px"})}
       (let [records (:records reel), pointer (:pointer reel)]
         (div
-         {:style (merge style/code {:font-size 12})}
+         {:style (merge ui/row-parted style/code {:font-size 12})}
          (<>
           (with-out-str
-           (pprint (if (:stopped? reel) (get records (dec pointer)) (last records)))))))
+           (pprint (if (:stopped? reel) (get records (dec pointer)) (last records)))))
+         (if (not= pointer 0)
+           (span
+            {:inner-text "Remove",
+             :style {:cursor :pointer,
+                     :font-size 12,
+                     :font-family ui/font-fancy,
+                     :color colors/motif},
+             :on-click (action-> :reel/remove (:pointer reel))}))))
       (div
        {:style (merge
                 style/code
                 {:font-size 12,
                  :white-space :pre,
-                 :padding "8px 0 32px 0",
+                 :padding "8px 0px 32px 0",
                  :line-height "20px"})}
        (<> (with-out-str (pprint (:store reel))))))))
    (span {})))
