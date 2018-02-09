@@ -77,7 +77,7 @@ Listening to `Command Shift a` to launch DevTools:
 
 ### Develop
 
-Workflow https://github.com/mvc-works/coworkflow
+Workflow https://github.com/mvc-works/calcit-workflow
 
 ### License
 
