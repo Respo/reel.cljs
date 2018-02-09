@@ -13,16 +13,18 @@ Demo http://repo.respo.site/reel/
 [![Clojars Project](https://img.shields.io/clojars/v/respo/reel.svg)](https://clojars.org/respo/reel)
 
 ```edn
-[respo/reel "0.2.4"]
+[respo/reel "0.3.0"]
 ```
+
+> "shortid" from npm is on dependency list, make sure it's installed.
 
 Browse [src/reel/main.cljs](https://github.com/Respo/reel/blob/master/src/reel/main.cljs) to see how to use it.
 
 Functions you need from namespaces:
 
 ```clojure
-[reel.util :refer [id!]]
-[reel.core :refer [reel-updater listen-devtools! refresh-reel]]
+[reel.util :refer [listen-devtools!]]
+[reel.core :refer [reel-updater refresh-reel]]
 [reel.schema :as reel-schema]
 ```
 
@@ -43,8 +45,7 @@ And we need a `reel-updater` besides the familiar `updater` we used in Respo:
 
 ```clojure
 (defn dispatch! [op op-data]
-  (let [op-id (id!),
-        new-reel (reel-updater updater @*reel op op-data op-id)]
+  (let [new-reel (reel-updater updater @*reel op op-data)]
     (reset! *reel new-reel)))
 ```
 
