@@ -1,11 +1,12 @@
 
 (ns reel.core (:require [clojure.string :as string] ["shortid" :as shortid]))
 
-(defn play-records [store records updater]
-  (if (empty? records)
+(defn play-records [store records updater pointer]
+  (if (zero? pointer)
     store
-    (let [[op op-data op-id] (first records), next-store (updater store op op-data op-id)]
-      (recur next-store (rest records) updater))))
+    (let [[op op-data op-id op-time] (first records)
+          next-store (updater store op op-data op-id op-time)]
+      (recur next-store (rest records) updater (dec pointer)))))
 
 (defn reel-updater [updater reel op op-data]
   (comment println "Name:" (name op))
@@ -21,10 +22,10 @@
          (case op
            :reel/toggle {:display? (not (:display? reel))}
            :reel/recall
-             (let [idx op-data, new-store (play-records base (subvec records 0 idx) updater)]
+             (let [idx op-data, new-store (play-records base records updater idx)]
                {:pointer idx, :stopped? true, :store new-store})
            :reel/run
-             (let [new-store (play-records base records updater)]
+             (let [new-store (play-records base records updater (count records))]
                {:store new-store, :stopped? false, :pointer nil})
            :reel/step
              (if stopped?
@@ -42,7 +43,7 @@
              (if stopped?
                (if (zero? pointer)
                  {}
-                 (let [new-store (play-records base (subvec records 0 pointer) updater)]
+                 (let [new-store (play-records base records updater pointer)]
                    {:store new-store,
                     :base new-store,
                     :pointer 0,
@@ -63,7 +64,7 @@
                       :records
                       (fn [records]
                         (vec (concat (subvec records 0 (dec idx)) (subvec records idx)))))
-                     (assoc :store (play-records base (subvec records 0 (dec idx)) updater)))))
+                     (assoc :store (play-records base records updater (dec idx))))))
            (do (.warn js/console "Unknown reel/ op:" op) nil))))
       (let [data-pack [op op-data op-id op-time]]
         (if (:stopped? reel)
@@ -73,12 +74,13 @@
               (update :records (fn [records] (conj records data-pack)))))))))
 
 (defn refresh-reel [reel base updater]
-  (let [next-base (if (:merged? reel) (:base reel) base)]
+  (let [next-base (if (:merged? reel) (:base reel) base), records (:records reel)]
     (-> reel
         (assoc :base next-base)
         (assoc
          :store
          (play-records
           next-base
-          (if (:stopped? reel) (subvec (:records reel) 0 (:pointer reel)) (:records reel))
-          updater)))))
+          records
+          updater
+          (if (:stopped? reel) (:pointer reel) (count records)))))))
