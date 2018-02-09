@@ -4,7 +4,8 @@
             [reel.comp.container :refer [comp-container]]
             [cljs.reader :refer [read-string]]
             [reel.util :refer [id!]]
-            [reel.core :refer [reel-updater listen-devtools! refresh-reel]]
+            [reel.core :refer [reel-updater refresh-reel]]
+            [reel.util :refer [listen-devtools!]]
             [reel.schema :as schema]
             [reel.updater :refer [updater]]))
 
@@ -17,7 +18,7 @@
 
 (defn dispatch! [op op-data]
   (println "Dispatch!" op op-data)
-  (let [op-id (id!), new-reel (reel-updater updater @*reel op op-data op-id)]
+  (let [new-reel (reel-updater updater @*reel op op-data)]
     (comment println "Reel:" new-reel)
     (reset! *reel new-reel)))
 

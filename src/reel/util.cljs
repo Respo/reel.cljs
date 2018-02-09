@@ -1,6 +1,12 @@
 
-(ns reel.util )
+(ns reel.util (:require [clojure.string :as string]))
 
-(def *id (atom 0))
-
-(defn id! [] (swap! *id inc) @*id)
+(defn listen-devtools! [keyboard dispatch!]
+  (.addEventListener
+   js/window
+   "keydown"
+   (fn [event]
+     (if (and (.-shiftKey event)
+              (.-metaKey event)
+              (= (.charCodeAt (string/upper-case keyboard)) (.-keyCode event)))
+       (dispatch! :reel/toggle nil)))))
