@@ -65,7 +65,7 @@
          (<>
           (with-out-str
            (pprint (if (:stopped? reel) (get records (dec pointer)) (last records)))))
-         (if (not= pointer 0)
+         (if (and (some? pointer) (not= pointer 0))
            (span
             {:inner-text "Remove",
              :style {:cursor :pointer,

@@ -13,7 +13,7 @@ Demo http://repo.respo.site/reel/
 [![Clojars Project](https://img.shields.io/clojars/v/respo/reel.svg)](https://clojars.org/respo/reel)
 
 ```edn
-[respo/reel "0.3.0"]
+[respo/reel "0.3.1"]
 ```
 
 > "shortid" from npm is on dependency list, make sure it's installed.
