@@ -23,10 +23,7 @@
 
 (defn render-button [guide on-click enabled?]
   (div
-   {:style (merge
-            ui/clickable-text
-            {:user-select :none}
-            (if (not enabled?) {:color (hsl 0 0 90)})),
+   {:style (merge ui/link {:user-select :none} (if (not enabled?) {:color (hsl 0 0 90)})),
     :on-click (if enabled? on-click identity)}
    (<> guide)))
 

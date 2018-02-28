@@ -4,18 +4,10 @@
   "description": "Respo Reel",
   "main": "index.js",
   "scripts": {
-    "cdn": "rsync -avr --progress dist/* tiye.me:cdn/reel",
-    "tiye": "rsync -r dist/{index.html,manifest.json} tiye.me:repo/Respo/reel/",
-    "upload": "yarn cdn && yarn tiye",
-    "release": "shadow-cljs release browser --debug",
     "watch": "shadow-cljs watch browser",
-    "compile-ssr": "shadow-cljs compile ssr",
-    "html-dev": "env=dev node target/ssr.js && cp entry/manifest.json target/",
-    "html": "node target/ssr.js && cp entry/manifest.json dist/",
-    "index.html": "yarn compile-ssr && yarn html-dev",
-    "del": "rm -rf dist/*",
-    "serve": "http-server dist",
-    "build": "yarn del && yarn release && yarn compile-ssr && yarn html"
+    "serve": "http-server dist -s",
+    "repl": "rlwrap shadow-cljs clj-repl",
+    "build": "shadow-cljs clj-run build.main/build"
   },
   "repository": {
     "type": "git",

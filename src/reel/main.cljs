@@ -3,7 +3,6 @@
   (:require [respo.core :refer [render! clear-cache! realize-ssr!]]
             [reel.comp.container :refer [comp-container]]
             [cljs.reader :refer [read-string]]
-            [reel.util :refer [id!]]
             [reel.core :refer [reel-updater refresh-reel]]
             [reel.util :refer [listen-devtools!]]
             [reel.schema :as schema]

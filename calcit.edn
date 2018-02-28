@@ -1563,7 +1563,7 @@
               :type :expr, :id "S1WvvrcFT-", :by "root", :at 1508644191367
               :data {
                "D" {:type :leaf, :text "merge", :id "BJdvS5taW", :by "root", :at 1508644192874}
-               "T" {:type :leaf, :text "ui/clickable-text", :id "rJY3DAKFa-", :by "root", :at 1508642404409}
+               "T" {:type :leaf, :text "ui/link", :id "rJY3DAKFa-", :by "root", :at 1519838177199}
                "b" {
                 :type :expr, :id "rkZCTvqFaZ", :by "root", :at 1508644806194
                 :data {
@@ -4085,21 +4085,6 @@
           }
          }
         }
-        "x" {
-         :type :expr, :id "Sy5VrioMlL3b", :by nil, :at 1507357346880
-         :data {
-          "T" {:type :leaf, :id "B1o4HoiMgLnb", :text "[]", :by "root", :at 1507357346880}
-          "j" {:type :leaf, :id "rk34BjoGeUn-", :text "reel.util", :by "root", :at 1507357346880}
-          "r" {:type :leaf, :id "HypESsjMlL2Z", :text ":refer", :by "root", :at 1507357346880}
-          "v" {
-           :type :expr, :id "B1C4SsiMg8nb", :by nil, :at 1507357346880
-           :data {
-            "T" {:type :leaf, :id "SyJBBooGeL3-", :text "[]", :by "root", :at 1507357346880}
-            "j" {:type :leaf, :id "HyxrSoizxLhb", :text "id!", :by "root", :at 1507357346880}
-           }
-          }
-         }
-        }
         "y" {
          :type :expr, :id "HJ-HrjszgL2Z", :by nil, :at 1507357346880
          :data {
@@ -5592,4 +5577,8 @@
  }
  :saved-files {}
  :configs {:storage-key "calcit.edn", :extension ".cljs", :output "src", :port 6001}
+ :repl {
+  :alive? false
+  :logs {}
+ }
 }
