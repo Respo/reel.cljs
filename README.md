@@ -6,7 +6,7 @@ Reel: state management library for Respo
 
 Built as [actions-in-recorder](https://github.com/mvc-works/actions-in-recorder).
 
-Demo http://repo.respo.site/reel/
+Demo http://repo.respo-mvc.org/reel/
 
 ### Usage
 
