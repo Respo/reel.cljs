@@ -1,7 +1,7 @@
 
 {:pom {:group-id "respo",
        :artifact-id "reel",
-       :version "0.3.3",
+       :version "0.3.4",
        :name "Time travel demo for Respo"}
  :packaging {:jar {:enabled true
                    :remote-repository {:id "clojars"
