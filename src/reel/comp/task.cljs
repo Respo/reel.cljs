@@ -1,6 +1,6 @@
 
 (ns reel.comp.task
-  (:require [respo.macros :refer [defcomp <> div button input]]
+  (:require [respo.core :refer [defcomp <> div button input]]
             [hsl.core :refer [hsl]]
             [respo.comp.space :refer [=<]]
             [respo-ui.core :as ui]

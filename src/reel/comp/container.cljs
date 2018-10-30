@@ -2,7 +2,7 @@
 (ns reel.comp.container
   (:require [hsl.core :refer [hsl]]
             [respo-ui.core :as ui]
-            [respo.macros :refer [defcomp cursor-> <> div span]]
+            [respo.core :refer [defcomp cursor-> <> div span]]
             [respo.comp.space :refer [=<]]
             [reel.comp.reel :refer [comp-reel]]
             [reel.comp.todolist :refer [comp-todolist]]))
