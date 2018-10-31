@@ -32,6 +32,7 @@
   (render-app! render!)
   (add-watch *reel :changes (fn [] (render-app! render!)))
   (listen-devtools! "a" dispatch!)
+  (dispatch! :reel/toggle nil)
   (println "App started!"))
 
 (defn reload! []
