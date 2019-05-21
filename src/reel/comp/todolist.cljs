@@ -3,8 +3,7 @@
   (:require [respo.core :refer [defcomp <> div span button input list->]]
             [respo.comp.space :refer [=<]]
             [respo-ui.core :as ui]
-            [reel.comp.task :refer [comp-task]]
-            [keycode.core :as keycode]))
+            [reel.comp.task :refer [comp-task]]))
 
 (defn on-click [state] (fn [e dispatch! mutate!] (dispatch! :task/add state) (mutate! "")))
 
@@ -25,8 +24,7 @@
        :value state,
        :style ui/input,
        :on-input on-input,
-       :on-keydown (fn [e d! m!]
-         (if (= (:keycode e) keycode/return) (do (d! :task/add state) (m! ""))))})
+       :on-keydown (fn [e d! m!] (if (= (:keycode e) 13) (do (d! :task/add state) (m! ""))))})
      (=< 8 nil)
      (button {:style ui/button, :on-click (on-click state)} (<> "Add")))
     (list-> {} (->> tasks (map (fn [task] [(:id task) (comp-task task)])))))))
