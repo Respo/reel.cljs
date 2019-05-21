@@ -1,6 +1,6 @@
 
 (ns reel.upload
-  (:require ["child_process" :as cp] [app.config :as config] [cumulo-util.file :refer [sh!]])
+  (:require ["child_process" :as cp] [reel.config :as config] [cumulo-util.file :refer [sh!]])
   (:require-macros [clojure.core.strint :refer [<<]]))
 
 (defn main! []
