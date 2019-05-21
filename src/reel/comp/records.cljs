@@ -2,9 +2,9 @@
 (ns reel.comp.records
   (:require [respo.core :refer [defcomp <> div span style list->]]
             [respo-ui.core :as ui]
-            [respo-ui.colors :as colors]
             [respo.comp.space :refer [=<]]
-            [reel.style :as style]))
+            [reel.style :as style]
+            [hsl.core :refer [hsl]]))
 
 (defn on-recall [idx] (fn [e dispatch!] (dispatch! :reel/recall idx)))
 
@@ -42,7 +42,7 @@
               :style (merge
                       style-record
                       (if (= pointer idx)
-                        {:background-color colors/attractive, :color :white})),
+                        {:background-color (hsl 220 100 76), :color :white})),
               :on-click (on-recall idx)}
              (<> (pr-str (first record))))]))))))
 

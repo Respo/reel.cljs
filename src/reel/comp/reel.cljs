@@ -4,12 +4,11 @@
             [hsl.core :refer [hsl]]
             [respo.comp.inspect :refer [comp-inspect]]
             [respo-ui.core :as ui]
-            [respo-ui.colors :as colors]
             [respo.comp.space :refer [=<]]
             [reel.comp.records :refer [comp-records]]
             [respo-value.comp.value :refer [comp-value]]
             [reel.style :as style]
-            [fipp.edn :refer [pprint]]))
+            [favored-edn.core :refer [write-edn]]))
 
 (defn on-merge [e dispatch! m!] (dispatch! :reel/merge nil))
 
@@ -59,16 +58,14 @@
       (let [records (:records reel), pointer (:pointer reel)]
         (div
          {:style (merge ui/row-parted style/code {:font-size 12})}
-         (<>
-          (with-out-str
-           (pprint (if (:stopped? reel) (get records (dec pointer)) (last records)))))
+         (<> (pr-str (if (:stopped? reel) (get records (dec pointer)) (last records))))
          (if (and (some? pointer) (not= pointer 0))
            (span
             {:inner-text "Remove",
              :style {:cursor :pointer,
                      :font-size 12,
                      :font-family ui/font-fancy,
-                     :color colors/motif},
+                     :color (hsl 200 100 84)},
              :on-click (action-> :reel/remove (:pointer reel))}))))
       (div
        {:style (merge
@@ -76,6 +73,7 @@
                 {:font-size 12,
                  :white-space :pre,
                  :padding "8px 0px 32px 0",
-                 :line-height "20px"})}
-       (<> (with-out-str (pprint (:store reel))))))))
+                 :line-height "20px",
+                 :overflow :auto})}
+       (<> (write-edn (:store reel)))))))
    (span {})))
