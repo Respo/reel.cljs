@@ -1,2 +1,5 @@
-
-{:paths ["src/" "cli/"]}
+{:paths ["src"]
+ :deps {
+   cirru/favored-edn {:mvn/version "0.1.1"}
+ }
+}
