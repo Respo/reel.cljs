@@ -13,7 +13,7 @@ Demo http://repo.respo-mvc.org/reel/
 [![Clojars Project](https://img.shields.io/clojars/v/respo/reel.svg)](https://clojars.org/respo/reel)
 
 ```edn
-[respo/reel "0.3.5"]
+[respo/reel "0.4.0-a1"]
 ```
 
 > "shortid" from npm is on dependency list, make sure it's installed.
@@ -66,7 +66,7 @@ Call `handle-reload!` with so many arguments to reload store and element caches:
 To use records panel, please refer to `comp-reel`:
 
 ```clojure
-(comp-reel reel styles)
+(comp-reel (>> states :reel) reel styles)
 ```
 
 Listening to `Command Shift a` to launch DevTools:

@@ -1,9 +1,11 @@
 
-(ns reel.updater (:require [respo.cursor :refer [mutate]]))
+(ns reel.updater )
 
 (defn updater [store op op-data op-id op-time]
   (case op
-    :states (update store :states (mutate op-data))
+    :states
+      (let [[cursor new-state] op-data]
+        (assoc-in store (concat [:states] op [:data]) new-state))
     :task/add
       (update store :tasks (fn [tasks] (cons {:id op-id, :done? false, :text op-data} tasks)))
     :task/remove
