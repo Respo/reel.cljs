@@ -2,7 +2,7 @@
 (ns reel.comp.container
   (:require [hsl.core :refer [hsl]]
             [respo-ui.core :as ui]
-            [respo.core :refer [defcomp cursor-> <> div span]]
+            [respo.core :refer [defcomp <> >> div span]]
             [respo.comp.space :refer [=<]]
             [reel.comp.reel :refer [comp-reel]]
             [reel.comp.todolist :refer [comp-todolist]]))
@@ -14,4 +14,4 @@
    (div
     {:style (merge ui/global)}
     (comp-todolist states (:tasks store))
-    (cursor-> :reel comp-reel states reel nil))))
+    (comp-reel (>> states :reel) reel nil))))

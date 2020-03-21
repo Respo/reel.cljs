@@ -1,5 +1,15 @@
-{:paths ["src"]
- :deps {
-   cirru/favored-edn {:mvn/version "0.1.1"}
- }
+{
+  :paths ["src"]
+  :deps {
+    cirru/favored-edn {:mvn/version "0.1.1"}
+    respo/value {:mvn/version "0.3.0-a1"}
+  }
+  :aliases {
+   :release {
+     :extra-deps {
+       appliedscience/deps-library {:mvn/version "0.3.4"}
+     }
+     :main-opts ["-m" "deps-library.release"]
+   }
+  }
 }

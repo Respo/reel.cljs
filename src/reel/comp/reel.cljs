@@ -1,6 +1,6 @@
 
 (ns reel.comp.reel
-  (:require [respo.core :refer [defcomp cursor-> action-> <> div button span]]
+  (:require [respo.core :refer [defcomp <> >> div button span]]
             [hsl.core :refer [hsl]]
             [respo.comp.inspect :refer [comp-inspect]]
             [respo-ui.core :as ui]
@@ -66,7 +66,7 @@
                      :font-size 12,
                      :font-family ui/font-fancy,
                      :color (hsl 200 100 84)},
-             :on-click (action-> :reel/remove (:pointer reel))}))))
+             :on-click (fn [e d!] (d! :reel/remove (:pointer reel)))}))))
       (div
        {:style (merge
                 style/code
