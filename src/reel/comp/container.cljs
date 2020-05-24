@@ -13,5 +13,5 @@
  (let [store (:store reel), states (:states store)]
    (div
     {:style (merge ui/global)}
-    (comp-todolist states (:tasks store))
+    (comp-todolist (>> states :todolist) (:tasks store))
     (comp-reel (>> states :reel) reel nil))))
