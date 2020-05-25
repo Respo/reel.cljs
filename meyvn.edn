@@ -1,9 +1,0 @@
-
-{:pom {:group-id "respo",
-       :artifact-id "reel",
-       :version "0.3.5",
-       :name "Time travel demo for Respo"}
- :packaging {:jar {:enabled true
-                   :remote-repository {:id "clojars"
-                                       :url "https://clojars.org/repo"}}}
- :scm {:enabled true}}

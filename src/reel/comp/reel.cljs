@@ -10,16 +10,6 @@
             [reel.style :as style]
             [favored-edn.core :refer [write-edn]]))
 
-(defn on-merge [e dispatch! m!] (dispatch! :reel/merge nil))
-
-(defn on-reset [e dispatch!] (dispatch! :reel/reset nil))
-
-(defn on-run [e dispatch!] (dispatch! :reel/run nil))
-
-(defn on-step [e d! m!] (d! :reel/step nil))
-
-(defn on-toggle [e dispatch!] (dispatch! :reel/toggle nil))
-
 (defn render-button [guide on-click enabled?]
   (div
    {:style (merge ui/link {:user-select :none} (if (not enabled?) {:color (hsl 0 0 90)})),
@@ -45,13 +35,13 @@
     {:style (merge ui/flex ui/column style-reel user-styles)}
     (div
      {}
-     (render-button "Merge" on-merge true)
-     (render-button "Reset" on-reset true)
-     (render-button "Step" on-step (:stopped? reel))
-     (render-button "Run" on-run (:stopped? reel))
-     (render-button "Close" on-toggle (not (:stopped? reel))))
+     (render-button "Merge" (fn [e d!] (d! :reel/merge nil)) true)
+     (render-button "Reset" (fn [e d!] (d! :reel/reset nil)) true)
+     (render-button "Step" (fn [e d!] (d! :reel/step nil)) (:stopped? reel))
+     (render-button "Run" (fn [e d!] (d! :reel/run nil)) (:stopped? reel))
+     (render-button "Close" (fn [e d!] (d! :reel/toggle nil)) (not (:stopped? reel))))
     (div
-     {:style ui/row}
+     {:style (merge ui/expand ui/row)}
      (comp-records (:records reel) (:pointer reel))
      (div
       {:style (merge ui/column ui/flex {:overflow :auto, :padding "0 8px"})}
