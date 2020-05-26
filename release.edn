@@ -1,6 +1,7 @@
-{:version "0.4.1-a1"
- :group-id "respo"
- :artifact-id "reel"
- :skip-tag true
- :description "Time travel demo for Respo"
+{:version "0.4.1",
+ :group-id "respo",
+ :artifact-id "reel",
+ :skip-tag true,
+ :description "Time travel demo for Respo",
  :scm-url "https://github.com/mvc-works/calcit-workflow"}
+
