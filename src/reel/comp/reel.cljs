@@ -8,7 +8,7 @@
             [reel.comp.records :refer [comp-records]]
             [respo-value.comp.value :refer [comp-value]]
             [reel.style :as style]
-            [favored-edn.core :refer [write-edn]]))
+            [cirru-edn.core :refer [write]]))
 
 (defn render-button [guide on-click enabled?]
   (div
@@ -17,15 +17,16 @@
    (<> guide)))
 
 (def style-reel
-  {:width "60%",
-   :height "60%",
+  {:width "70%",
+   :height "90%",
    :right 0,
    :bottom 0,
    :position :fixed,
    :background-color (hsl 0 0 100 0.7),
    :border (str "1px solid " (hsl 0 0 90)),
    :font-size 14,
-   :backdrop-filter "blur(2px)"})
+   :backdrop-filter "blur(2px)",
+   :z-index 9999})
 
 (defcomp
  comp-reel
@@ -34,7 +35,7 @@
    (div
     {:style (merge ui/flex ui/column style-reel user-styles)}
     (div
-     {}
+     {:style {:border-bottom (str "1px solid " (hsl 0 0 90))}}
      (render-button "Merge" (fn [e d!] (d! :reel/merge nil)) true)
      (render-button "Reset" (fn [e d!] (d! :reel/reset nil)) true)
      (render-button "Step" (fn [e d!] (d! :reel/step nil)) (:stopped? reel))
@@ -44,11 +45,23 @@
      {:style (merge ui/expand ui/row)}
      (comp-records (:records reel) (:pointer reel))
      (div
-      {:style (merge ui/column ui/flex {:overflow :auto, :padding "0 8px"})}
+      {:style (merge
+               ui/column
+               ui/flex
+               {:overflow :auto,
+                :padding "0 8px",
+                :border-left (str "1px solid " (hsl 0 0 90))})}
       (let [records (:records reel), pointer (:pointer reel)]
         (div
          {:style (merge ui/row-parted style/code {:font-size 12})}
-         (<> (pr-str (if (:stopped? reel) (get records (dec pointer)) (last records))))
+         (let [record (if (:stopped? reel) (get records (dec pointer)) (last records))]
+           (if (some? record)
+             (let [[action op-data op-id op-time] record]
+               (div
+                {}
+                (div {} (<> (str action)) (=< 24 nil) (<> op-id) (=< 8 nil) (<> op-time))
+                (<> (pr-str op-data))))
+             (<> "nil")))
          (if (and (some? pointer) (not= pointer 0))
            (span
             {:inner-text "Remove",
@@ -59,11 +72,13 @@
              :on-click (fn [e d!] (d! :reel/remove (:pointer reel)))}))))
       (div
        {:style (merge
+                ui/expand
                 style/code
                 {:font-size 12,
                  :white-space :pre,
-                 :padding "8px 0px 32px 0",
+                 :padding "16px 0px 200px 0px",
                  :line-height "20px",
-                 :overflow :auto})}
-       (<> (write-edn (:store reel)))))))
+                 :overflow :auto,
+                 :border-top (str "1px solid " (hsl 0 0 90))})}
+       (<> (write (:store reel)))))))
    (span {})))

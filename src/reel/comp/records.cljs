@@ -18,7 +18,7 @@
 
 (def style-record
   {:cursor :pointer,
-   :padding "0 8px",
+   :padding "0 4px",
    :white-space :nowrap,
    :overflow :hidden,
    :text-overflow :ellipsis})
