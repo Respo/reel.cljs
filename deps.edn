@@ -1,7 +1,7 @@
 {
   :paths ["src"]
   :deps {
-    cirru/favored-edn {:mvn/version "0.1.1"}
+    cirru/edn {:mvn/version "0.0.9"}
     respo/value {:mvn/version "0.3.0"}
   }
   :aliases {
