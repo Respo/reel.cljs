@@ -17,8 +17,8 @@
    (<> guide)))
 
 (def style-reel
-  {:width "70%",
-   :height "90%",
+  {:width "60%",
+   :height "80%",
    :right 0,
    :bottom 0,
    :position :fixed,
@@ -47,29 +47,30 @@
      (div
       {:style (merge
                ui/column
-               ui/flex
+               ui/expand
                {:overflow :auto,
                 :padding "0 8px",
-                :border-left (str "1px solid " (hsl 0 0 90))})}
-      (let [records (:records reel), pointer (:pointer reel)]
-        (div
-         {:style (merge ui/row-parted style/code {:font-size 12})}
-         (let [record (if (:stopped? reel) (get records (dec pointer)) (last records))]
-           (if (some? record)
-             (let [[action op-data op-id op-time] record]
-               (div
-                {}
-                (div {} (<> (str action)) (=< 24 nil) (<> op-id) (=< 8 nil) (<> op-time))
-                (<> (pr-str op-data))))
-             (<> "nil")))
-         (if (and (some? pointer) (not= pointer 0))
-           (span
-            {:inner-text "Remove",
-             :style {:cursor :pointer,
-                     :font-size 12,
-                     :font-family ui/font-fancy,
-                     :color (hsl 200 100 84)},
-             :on-click (fn [e d!] (d! :reel/remove (:pointer reel)))}))))
+                :border-left (str "1px solid " (hsl 0 0 94))})}
+      (let [records (:records reel)
+            pointer (:pointer reel)
+            record (if (:stopped? reel) (get records (dec pointer)) (last records))]
+        (if (some? record)
+          (let [[action op-data op-id op-time] record]
+            (div
+             {:style (merge ui/column style/code {:font-size 12})}
+             (div
+              {:style (merge ui/row-parted {:border-bottom (str "1px solid " (hsl 0 0 94))})}
+              (div {} (<> (str action)) (=< 24 nil) (<> op-id) (=< 8 nil) (<> op-time))
+              (if (and (some? pointer) (not= pointer 0))
+                (span
+                 {:inner-text "Remove",
+                  :style {:cursor :pointer,
+                          :font-size 12,
+                          :font-family ui/font-fancy,
+                          :color (hsl 200 100 84)},
+                  :on-click (fn [e d!] (d! :reel/remove (:pointer reel)))})))
+             (div {:style (merge ui/expand {:max-height "200px"})} (<> (pr-str op-data)))))
+          (<> "nil")))
       (div
        {:style (merge
                 ui/expand
@@ -79,6 +80,6 @@
                  :padding "16px 0px 200px 0px",
                  :line-height "20px",
                  :overflow :auto,
-                 :border-top (str "1px solid " (hsl 0 0 90))})}
+                 :border-top (str "1px solid " (hsl 0 0 94))})}
        (<> (write (:store reel)))))))
    (span {})))
