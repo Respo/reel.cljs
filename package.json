@@ -24,7 +24,7 @@
     "shadow-cljs": "2.10.13"
   },
   "dependencies": {
-    "node-notifier": "7.0.1",
+    "node-notifier": "8.0.1",
     "shortid": "^2.2.15"
   }
 }
